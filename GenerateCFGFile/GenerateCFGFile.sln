@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateCFGFile", "GenerateCFGFile\GenerateCFGFile.csproj", "{0209AE3C-91CF-416D-B0D6-C564D455B2F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0209AE3C-91CF-416D-B0D6-C564D455B2F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0209AE3C-91CF-416D-B0D6-C564D455B2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0209AE3C-91CF-416D-B0D6-C564D455B2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0209AE3C-91CF-416D-B0D6-C564D455B2F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

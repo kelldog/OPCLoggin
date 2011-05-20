@@ -1,0 +1,10 @@
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib_Tester\OPCLib_Tester\bin\Release\OPCLib_Tester.exe
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib_Tester\OPCLib_Tester\bin\Release\OPCLib_Tester.pdb
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib_Tester\OPCLib_Tester\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib_Tester\OPCLib_Tester\obj\Release\OPCLib_Tester.exe
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib_Tester\OPCLib_Tester\obj\Release\OPCLib_Tester.pdb
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\bin\Release\OPCLib_Tester.exe
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\bin\Release\OPCLib_Tester.pdb
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\obj\Release\OPCLib_Tester.exe
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\obj\Release\OPCLib_Tester.pdb

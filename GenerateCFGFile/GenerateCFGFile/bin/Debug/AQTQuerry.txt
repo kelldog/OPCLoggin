@@ -1,0 +1,113 @@
+
+//DC Stations/Heater (ChamberID = 248)
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_AUX3B_HIVAC_CLOSED";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_HVPS_POWER_B_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_HVPS_B_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=248 AND Name LIKE "%_Current_recipe_step_number";
+
+//DC Stations/Blank (ChamberID = 246)
+
+SELECT Name FROM fields WHERE ChamberTypeID=246 AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=246 AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=246 AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=246 AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=246 AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=246 AND Name LIKE "%_Current_recipe_step_number";
+
+//3.       RF Stations/Heater (ChamberTypeID=244, 258)
+
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_HVPS_POWER_A_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_HVPS_A_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_HVPS_B_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_AUX3B_HIVAC_CLOSED";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_HVPS_POWER_B_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (244,258) AND Name LIKE "%_Current_recipe_step_number";
+
+//4.       RF Stations/Blank (ChamberTypeID=242, 256)
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_HVPS_POWER_A_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_HVPS_A_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (242,256) AND Name LIKE "%_Current_recipe_step_number";
+
+//5.       Double Sided Heater (ChamberTypeID=61)
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_AUX3_HIVAC_CLOSED";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_AUX3B_HIVAC_CLOSED";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_HVPS_POWER_A_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_HVPS_POWER_B_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_HVPS_A_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_HVPS_B_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=61 AND Name LIKE "%_Current_recipe_step_number";
+
+//6.       Cooling Stations (ChamberTypeID=62)
+SELECT Name FROM fields WHERE ChamberTypeID=62 AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=62 AND Name LIKE "%_Current_recipe_step_number";
+SELECT Name FROM fields WHERE ChamberTypeID=62 AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=62 AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=62 AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=62 AND Name LIKE "%_MFC_4_FLOW_READBACK";
+
+//7.       Heater/DC Stations (ChamberTypeID = 249)
+
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_AUX3_HIVAC_CLOSED";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_HVPS_POWER_A_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_HVPS_A_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=249 AND Name LIKE "%_Current_recipe_step_number";
+
+//8.       Blank/DC Stations (ChamberTypeID = 247)
+SELECT Name FROM fields WHERE ChamberTypeID=247 AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=247 AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=247 AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=247 AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=247 AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID=247 AND Name LIKE "%_Current_recipe_step_number";
+
+//9.       Heater/RF Stations (ChamberTypeID=245, 259)
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_HVPS_POWER_B_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_AUX3_HIVAC_CLOSED";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_HVPS_POWER_A_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_HVPS_A_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_HVPS_B_VOLTAGE_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (245,259) AND Name LIKE "%_Current_recipe_step_number";
+
+//10.   Blank/RF Stations (ChamberTypeID=243, 257)
+SELECT Name FROM fields WHERE ChamberTypeID IN (243,257) AND Name LIKE "%_PRESSURE_CAP_MAN_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (243,257) AND Name LIKE "%_MFC_1_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (243,257) AND Name LIKE "%_MFC_2_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (243,257) AND Name LIKE "%_MFC_3_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (243,257) AND Name LIKE "%_MFC_4_FLOW_READBACK";
+SELECT Name FROM fields WHERE ChamberTypeID IN (243,257) AND Name LIKE "%_Current_recipe_step_number";
+
+
+
+
+//THROTLE Posistion
+//GET RiD of all bias fields
+//GET rid of all B side except on heater

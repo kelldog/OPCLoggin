@@ -1,0 +1,5 @@
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib\OPCLib\bin\Debug\OPCLib.dll
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib\OPCLib\bin\Debug\OPCLib.pdb
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib\OPCLib\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib\OPCLib\obj\Debug\OPCLib.dll
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLib\OPCLib\obj\Debug\OPCLib.pdb
