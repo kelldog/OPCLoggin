@@ -34,7 +34,7 @@ namespace OPCDatabaseLogger
         }
         public OPCDataParser()
         {
-            this.ServiceName = "OPCFILEWATCHER";
+            this.ServiceName = "OPC_FILE_WATCHER";
             this.EventLog.Log = "Application";
             this.CanHandlePowerEvent = true;
             this.CanHandleSessionChangeEvent = true;

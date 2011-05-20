@@ -11,7 +11,7 @@ using System.Configuration.Assemblies;
 using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
-using OPCLib;
+
 
 namespace OPCDatabaseLogger
 {
@@ -28,7 +28,7 @@ namespace OPCDatabaseLogger
             if (opt == "/install" || opt == "/uninstall") 
             { 
                 TransactedInstaller ti = new TransactedInstaller();
-                MonitorInstaller mi = new MonitorInstaller("OPCFILEWATCHER"); 
+                MonitorInstaller mi = new MonitorInstaller("OPC_FILE_WATCHER"); 
                 ti.Installers.Add(mi); 
                 string path = String.Format("/assemblypath={0}", Assembly.GetExecutingAssembly().Location); 
                 string[] cmdline = { path }; 
@@ -66,8 +66,8 @@ namespace OPCDatabaseLogger
             ServiceInstaller si = new ServiceInstaller(); 
             si.ServiceName = service_name; 
             si.StartType = ServiceStartMode.Automatic;
-            si.Description = "OPCFILEWATCHER";
-            si.DisplayName = "OPC File Parser and Database Loader"; 
+            si.Description = "OPC_FILE_WATCHER";
+            si.DisplayName = "OPC File Parser"; 
             this.Installers.Add(spi); 
             this.Installers.Add(si); 
         } 

@@ -9,6 +9,7 @@ using System.Configuration.Assemblies;
 using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
+using OPCLib;
 
 
 namespace OPCLib_Tester
@@ -44,9 +45,11 @@ namespace OPCLib_Tester
         {
             if (e.ChangeType == WatcherChangeTypes.Changed || e.ChangeType == WatcherChangeTypes.Created)
             {
+                
                 Console.WriteLine("Log file Change event detected..." + e.FullPath);
                 watcher.EnableRaisingEvents = false;
-                ParseMethod.Invoke(AO, new object[] { e.FullPath });
+                OPCLib.FileDataFetcher.ParseFile(e.FullPath);
+               // ParseMethod.Invoke(AO, new object[] { e.FullPath });
                // FileDataFetcher.ParseFile(e.FullPath);
                 watcher.EnableRaisingEvents = true;
             }

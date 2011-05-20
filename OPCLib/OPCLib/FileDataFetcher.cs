@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using System.Threading;
 
 
 
@@ -15,6 +16,13 @@ namespace OPCLib
 
         public static void ParseFile(string file)
         {
+            WaitCallback cb = new WaitCallback(parseFile);
+            ThreadPool.QueueUserWorkItem(cb, file);
+            
+        }
+        private static void parseFile(object f)
+        {
+            string file = (string)f;
             StreamReader reader = new StreamReader(file);
             List<string> lines = new List<string>();
 
@@ -83,12 +91,15 @@ namespace OPCLib
                 DateTime time;
 
                 int zz = 0;
+
+                Console.WriteLine(string.Format("lines to parse: {0} Fields per lines {1}", lines.Count(),OPCFieldNames.Count()));
+               
                 while (zz < lines.Count)
                 {
                     line = lines[zz].Split(',');
                     time = DateTime.Parse(line[0] + " " + line[1]);
                     int i = 2;
-
+                    Console.WriteLine(string.Format("{0}",zz));
                     while (i < line.Length)
                     {
                         try

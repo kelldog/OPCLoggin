@@ -3,3 +3,8 @@ C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCDatabaseLogger\OPCDataba
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCDatabaseLogger\OPCDatabaseLogger\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCDatabaseLogger\OPCDatabaseLogger\obj\Debug\OPCDatabaseLogger.exe
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCDatabaseLogger\OPCDatabaseLogger\obj\Debug\OPCDatabaseLogger.pdb
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCDatabaseLogger\OPCDatabaseLogger\obj\Debug\OPCDatabaseLogger.exe
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCDatabaseLogger\OPCDatabaseLogger\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCDatabaseLogger\OPCDatabaseLogger\bin\Debug\OPCDatabaseLogger.exe
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCDatabaseLogger\OPCDatabaseLogger\bin\Debug\OPCDatabaseLogger.pdb
+C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCDatabaseLogger\OPCDatabaseLogger\obj\Debug\OPCDatabaseLogger.pdb
