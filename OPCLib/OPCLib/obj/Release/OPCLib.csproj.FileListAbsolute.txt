@@ -8,3 +8,8 @@ C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib\OPCLib\bin
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib\OPCLib\obj\Release\ResolveAssemblyReference.cache
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib\OPCLib\obj\Release\OPCLib.dll
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib\OPCLib\obj\Release\OPCLib.pdb
+C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\bin\Release\OPCLib.dll
+C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\bin\Release\OPCLib.pdb
+C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\obj\Release\ResolveAssemblyReference.cache
+C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\obj\Release\OPCLib.dll
+C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\obj\Release\OPCLib.pdb

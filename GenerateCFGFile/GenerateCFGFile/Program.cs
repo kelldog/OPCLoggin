@@ -28,15 +28,36 @@ namespace GenerateCFGFile
                     {
                         continue;
                     }
+
                     MySqlCommand c = new MySqlCommand(next, conn);
+                    
                    // Mysql
                     MySqlDataReader reader = c.ExecuteReader();
                     List<string> Names = new List<string>();
+                    List<int> IDs = new List<int>();
                     while (reader.Read())
                     {
                         Names.Add(reader.GetString(0));
+                        int ID = reader.GetInt32(1);
+                        IDs.Add(ID);
+                       
+
                     }
                     reader.Close();
+
+                    foreach (int id in IDs)
+                    {
+                        MySqlCommand c2 = new MySqlCommand(string.Format("INSERT INTO aqt_fields (ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,TypeID) SELECT ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,TypeID FROM fields WHERE ID = {0}", id), conn);
+                        try
+                        {
+                            c2.ExecuteNonQuery();
+                            Console.WriteLine(string.Format("ID cloned {0}", id));
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
 
                     foreach (string s in Names)
                     {

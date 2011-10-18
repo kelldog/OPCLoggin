@@ -65,9 +65,12 @@ namespace OPCLib
             int ParseSuccesses = 0;
             int ParseFailures = 0;
 
+            string inFilePath = @"C:\temp.csv";
+            StreamWriter tempFile = new StreamWriter(inFilePath);
+
             try
             {
-                Conn.Open();
+                
                 string[] line = HeaderNames.ToArray();
 
                 List<string> OPCFieldNames = new List<string>();
@@ -123,7 +126,9 @@ namespace OPCLib
                                 try
                                 {
                                     val *= FieldInfos[i - 2].Scale;
-                                    AQT_Database.Load_To_AQT_Database(FieldInfos[i - 2], val, time, Conn);
+                                    AQT_Database.WriteToFile(tempFile, FieldInfos[i - 2], val, time);
+
+                                    //AQT_Database.Load_To_AQT_Database(FieldInfos[i - 2], val, time, Conn);
                                     MySQLInsertSuccesses++;
                                 }
                                 catch (Exception ex)
@@ -145,6 +150,21 @@ namespace OPCLib
                     }
                     zz++;
                 }
+
+                tempFile.Close();
+
+                if (Conn.State == System.Data.ConnectionState.Closed)
+                {
+                    Conn.Open();
+                }
+
+                AQT_Database.WriteInFileToDatabase(Conn, inFilePath);
+                
+                Conn.Close();
+
+                
+                File.Delete(inFilePath);
+
                 Console.WriteLine(string.Format("Entries Parsed: {0}  Failed Parsed Entries: {1}   MySQL Successes: {2}  MySQL Failures: {3}", ParseSuccesses, ParseFailures, MySQLInsertSuccesses, MySQLInsertFailures));
             }
             catch (Exception ex)

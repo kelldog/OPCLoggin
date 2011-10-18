@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using System.IO;
-
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
@@ -25,6 +23,27 @@ namespace OPCLib
             c.ExecuteNonQuery();
         }
 
+        public static void WriteInFileToDatabase(MySqlConnection conn,string inFile)
+        {
+            MySqlCommand c = new MySqlCommand(string.Format("LOAD DATA INFILE \'{0}\' INTO TABLE aqt_data (@var1) SET f=Cast(@var1);",inFile), conn);
+            c.ExecuteNonQuery();
+        }
+        public static void WriteToFile(StreamWriter fileout,OPCField F, float Value, DateTime time)
+        {
+            //MySql.Data.Types.MySqlDateTime faaf;
+
+           //MySql.Data.Types.MySqlDateTime afsdfad = new MySqlDbType();
+            //afsdfad.
+            fileout.Write(string.Format("{0},{1},{2}\n", F.ID, time.ToBinary(), Value));
+
+            /*
+             * 
+             * LOAD DATA INFILE '/data/mysql/tm.sql' INTO TABLE tm_table
+    -> (@var1) SET f=FROM_UNIXTIME(@var1);
+
+             * 
+             * */
+        }
         public static MySqlConnection GetMYSQLConnection()
         {
             MySqlConnection conn = new MySqlConnection(connStr);
@@ -32,21 +51,22 @@ namespace OPCLib
         }
         public void InsertnewOPCField(OPCField F, MySqlConnection conn)
         {
-            MySqlCommand c = new MySqlCommand("INSERT into fields ( Name ) VALUES (  ); " , conn);
-
+            throw new Exception("field not in table lookup");
         }
 
         public static OPCField GetFieldInfo(string Name, MySqlConnection conn)
         {
+           
             Name = Name.TrimEnd('\r', ' ', '\n');
             Name = Name.TrimStart('\r', ' ', '\n');
-            string querry = "SELECT * FROM fields WHERE Name='" + Name+"'";
+            string querry = "SELECT * FROM aqt_fields WHERE Name='" + Name+"'";
            // Console.WriteLine(querry);
             MySqlCommand c = new MySqlCommand(querry, conn);
             if (CachedFields.ContainsKey(Name))
             {
                 return CachedFields[Name];
             }
+            conn.Open();
             OPCField Field = null;
             MySqlDataReader reader = c.ExecuteReader();
 
