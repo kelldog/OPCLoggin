@@ -8,6 +8,7 @@ using System.Data.OleDb;
 using System.Xml.Serialization;
 using System.Xml;
 using System.IO;
+using System.Threading;
 
 using MySql.Data.MySqlClient;
 
@@ -72,7 +73,7 @@ namespace DatabaseBuilder
             if (reader.Read())
             {
                 Field = new OPCField();
-                Field.ID = (int)reader["ID"];
+                Field.ID = (short)reader["ID"];
                 Field.Name = (string)reader["Name"];
                 Field.Scale = (float)reader["Scale"];
             }
@@ -91,7 +92,7 @@ namespace DatabaseBuilder
     public class Program
     {
 
-        public static string connStr = "server=localhost;user=root;database=AQT;port=3306;password=aqt;";
+        public static string connStr = "server=localhost;user=root;database=aqt;port=3306;password=aqt;";
 
         public static string ToolServerF = "Provider=Microsoft.JET.OLEDB.4.0;" + "data source={0}";
         public static string CellWorkF = "Provider=Microsoft.JET.OLEDB.4.0;" + "data source={0}";
@@ -103,8 +104,8 @@ namespace DatabaseBuilder
 
             if (args.Length == 0)
             {
-                ToolServer = string.Format(ToolServerF, "ToolServer.mdb");
-                CellWork = string.Format(CellWorkF, "CellWork.mdb");
+                ToolServer = string.Format(ToolServerF, @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Access_Databases\ToolServer.mdb");
+                CellWork = string.Format(CellWorkF, @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Access_Databases\CellWork.mdb");
             }
             else
             {
@@ -112,6 +113,10 @@ namespace DatabaseBuilder
                 CellWork = string.Format(CellWorkF, args[1]);
             }
 
+            Console.WriteLine(string.Format("using Tool Server File: {0}",ToolServer ));
+            Console.WriteLine(string.Format("using Cell Work File: {0}", CellWork)) ;
+
+            Thread.Sleep(1000);
 
             List<OPCField_ex> OPCFields = new List<OPCField_ex>();
 
@@ -188,8 +193,6 @@ namespace DatabaseBuilder
             return AvailableStations;
         }
 
-
-
         public static List<OPCField_ex> ProcessDataQuery(OPCStationInfo Station, string ToolServer)
         {
 
@@ -259,7 +262,7 @@ namespace DatabaseBuilder
                     try
                     {
                         OPCField_ex f = new OPCField_ex();
-                        f.DataType = GetTypeFromNum((Int32)mReader["DataType"]);
+                        f.DataType = GetTypeFromNum( (Int32)mReader["DataType"] );
                         f.Type = (Int32)mReader["DataType"];
                         Console.Write(".");
                         f.ScaleFactor = (float)mReader["OPCScaleFactor"];

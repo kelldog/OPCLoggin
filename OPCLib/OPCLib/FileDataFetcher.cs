@@ -65,7 +65,8 @@ namespace OPCLib
             int ParseSuccesses = 0;
             int ParseFailures = 0;
 
-            string inFilePath = @"C:\temp.csv";
+            //this depends on mysql installation
+            string inFilePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\temp.csv";
             StreamWriter tempFile = new StreamWriter(inFilePath);
 
             try
@@ -100,6 +101,7 @@ namespace OPCLib
                 while (zz < lines.Count)
                 {
                     line = lines[zz].Split(',');
+                    
                     time = DateTime.Parse(line[0] + " " + line[1]);
                     int i = 2;
                     Console.WriteLine(string.Format("{0}",zz));
@@ -163,7 +165,7 @@ namespace OPCLib
                 Conn.Close();
 
                 
-                File.Delete(inFilePath);
+                
 
                 Console.WriteLine(string.Format("Entries Parsed: {0}  Failed Parsed Entries: {1}   MySQL Successes: {2}  MySQL Failures: {3}", ParseSuccesses, ParseFailures, MySQLInsertSuccesses, MySQLInsertFailures));
             }
@@ -175,6 +177,9 @@ namespace OPCLib
             {
                 reader.Close();
                 Conn.Close();
+                tempFile.Close();
+                File.Delete(inFilePath);
+
             }
         }
     }

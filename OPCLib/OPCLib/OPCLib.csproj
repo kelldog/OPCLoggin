@@ -102,6 +102,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "C:\OPCLib\$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\$(TargetFileName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

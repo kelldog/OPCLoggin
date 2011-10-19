@@ -4,18 +4,38 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using MySql.Data.MySqlClient;
-
+using System.Threading;
 
 namespace GenerateCFGFile
 {
     class Program
     {
-        public static string connStr = "server=localhost;user=root;database=AQT;port=3306;password=aqt;";
+        public static string connStr = "server=localhost;user=root;database=aqt;port=3306;password=aqt;";
 
         static void Main(string[] args)
         {
-            StreamReader Queries = new StreamReader(args[0]);
-            StreamWriter outFile = new StreamWriter(args[1]);
+
+            string outFilePath = "";
+            string AQT_Fields_To_Graph_QueryPath = "";
+
+            if (args.Length == 2)
+            {
+                outFilePath = args[1];
+                AQT_Fields_To_Graph_QueryPath = args[0];
+            }
+            else
+            {
+                outFilePath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\output.txt";
+                AQT_Fields_To_Graph_QueryPath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\AQTQuerryV2.txt";
+            }
+
+            Console.Write(string.Format("Using outfile: {0}", outFilePath));
+            Console.Write(string.Format("Using Query File: {0}", AQT_Fields_To_Graph_QueryPath));
+            
+            Thread.Sleep(1000);
+
+            StreamReader Queries = new StreamReader(AQT_Fields_To_Graph_QueryPath);
+            StreamWriter outFile = new StreamWriter(outFilePath);
             MySqlConnection conn = new MySqlConnection(Program.connStr);
 
             try
@@ -31,7 +51,6 @@ namespace GenerateCFGFile
 
                     MySqlCommand c = new MySqlCommand(next, conn);
                     
-                   // Mysql
                     MySqlDataReader reader = c.ExecuteReader();
                     List<string> Names = new List<string>();
                     List<int> IDs = new List<int>();

@@ -10,3 +10,8 @@ C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\DatabaseBuilder\D
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.pdb
 C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.exe
 C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.pdb
+C:\opc_test\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.exe
+C:\opc_test\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.pdb
+C:\opc_test\DatabaseBuilder\DatabaseBuilder\bin\Debug\DatabaseBuilder.exe
+C:\opc_test\DatabaseBuilder\DatabaseBuilder\bin\Debug\DatabaseBuilder.pdb
+C:\opc_test\DatabaseBuilder\DatabaseBuilder\obj\Debug\ResolveAssemblyReference.cache

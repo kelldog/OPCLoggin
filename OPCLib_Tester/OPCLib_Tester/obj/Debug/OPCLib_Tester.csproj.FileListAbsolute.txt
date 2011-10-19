@@ -14,3 +14,10 @@ C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPC
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\obj\Debug\OPCLib_Tester.pdb
 C:\Users\Line1\Documents\Visual Studio 2008\Projects\OPCLoggin\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib.dll
+C:\opc_test\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.exe.config
+C:\opc_test\OPCLib_Tester\OPCLib_Tester\obj\Debug\OPCLib_Tester.exe
+C:\opc_test\OPCLib_Tester\OPCLib_Tester\obj\Debug\OPCLib_Tester.pdb
+C:\opc_test\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.exe
+C:\opc_test\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.pdb
+C:\opc_test\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib.dll
+C:\opc_test\OPCLib_Tester\OPCLib_Tester\obj\Debug\ResolveAssemblyReference.cache

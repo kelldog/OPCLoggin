@@ -9,7 +9,7 @@ namespace OPCLib
     {
 
         public string Name;
-        public int ID;
+        public short ID;
         public float Scale;
     }
 }

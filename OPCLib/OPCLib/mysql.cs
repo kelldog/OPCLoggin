@@ -25,24 +25,14 @@ namespace OPCLib
 
         public static void WriteInFileToDatabase(MySqlConnection conn,string inFile)
         {
-            MySqlCommand c = new MySqlCommand(string.Format("LOAD DATA INFILE \'{0}\' INTO TABLE aqt_data (@var1) SET f=Cast(@var1);",inFile), conn);
+            string command = string.Format("LOAD DATA INFILE \'temp.csv\' INTO TABLE opc_data \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';" , inFile );
+            MySqlCommand c = new MySqlCommand( command , conn);
             c.ExecuteNonQuery();
         }
-        public static void WriteToFile(StreamWriter fileout,OPCField F, float Value, DateTime time)
+        public static void WriteToFile(StreamWriter fileout,OPCField F, float Value, DateTime Time)
         {
-            //MySql.Data.Types.MySqlDateTime faaf;
-
-           //MySql.Data.Types.MySqlDateTime afsdfad = new MySqlDbType();
-            //afsdfad.
-            fileout.Write(string.Format("{0},{1},{2}\n", F.ID, time.ToBinary(), Value));
-
-            /*
-             * 
-             * LOAD DATA INFILE '/data/mysql/tm.sql' INTO TABLE tm_table
-    -> (@var1) SET f=FROM_UNIXTIME(@var1);
-
-             * 
-             * */
+	        string time = string.Format("{0}-{1}-{2} {3}:{4}:{5}.{6}", Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Second, Time.Millisecond);
+            fileout.Write(string.Format("{0},{1},{2}\r\n", F.ID, time, Value));
         }
         public static MySqlConnection GetMYSQLConnection()
         {
@@ -66,7 +56,10 @@ namespace OPCLib
             {
                 return CachedFields[Name];
             }
-            conn.Open();
+            if (conn.State == System.Data.ConnectionState.Closed)
+            {
+                conn.Open();
+            }
             OPCField Field = null;
             MySqlDataReader reader = c.ExecuteReader();
 
@@ -74,8 +67,9 @@ namespace OPCLib
             {
                 if (reader.Read())
                 {
+                    
                     Field = new OPCField();
-                    Field.ID = (int)reader["ID"];
+                    Field.ID = reader.GetInt16("ID");
                     Field.Name = (string)reader["Name"];
                     Field.Scale = reader.GetFloat("Scale");
                 }

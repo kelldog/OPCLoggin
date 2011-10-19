@@ -9,7 +9,7 @@ namespace DatabaseBuilder
     {
 
         public string Name;
-        public int ID;
+        public short ID;
         public float Scale;
         public int StationTypeID;
         public int StationID;

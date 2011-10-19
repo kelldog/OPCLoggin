@@ -26,8 +26,8 @@ namespace OPCLib_Tester
         public static MethodInfo ParseMethod;
 
         static void Main(string[] args)
-        {        
-            OPCcode = Assembly.LoadFrom(@"C:\OPCLib\OPCLib.dll");
+        {
+            OPCcode = Assembly.LoadFrom(@"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\OPCLib.dll");
             T = OPCcode.GetType("OPCLib.FileDataFetcher");
             AO = Activator.CreateInstance(T);
             ParseMethod = T.GetMethod("ParseFile");

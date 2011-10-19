@@ -13,3 +13,8 @@ C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\bin\Release\
 C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\obj\Release\ResolveAssemblyReference.cache
 C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\obj\Release\OPCLib.dll
 C:\Users\cowdo\Documents\AQT\AQT_Datalogger\OPCLoggin\OPCLib\OPCLib\obj\Release\OPCLib.pdb
+C:\opc_test\OPCLib\OPCLib\bin\Release\OPCLib.dll
+C:\opc_test\OPCLib\OPCLib\bin\Release\OPCLib.pdb
+C:\opc_test\OPCLib\OPCLib\obj\Release\ResolveAssemblyReference.cache
+C:\opc_test\OPCLib\OPCLib\obj\Release\OPCLib.dll
+C:\opc_test\OPCLib\OPCLib\obj\Release\OPCLib.pdb
