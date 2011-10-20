@@ -7,78 +7,47 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Threading;
 
-
-
 namespace OPCLib
 {
     public class FileDataFetcher
     {
+        static MySqlConnection Conn = AQT_Database.GetMYSQLConnection();
+
+        //this depends on mysql installation
+        static string inFilePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\temp.csv";
 
         public static void ParseFile(string file)
         {
-            WaitCallback cb = new WaitCallback(parseFile);
-            ThreadPool.QueueUserWorkItem(cb, file);
-            
+          //  WaitCallback cb = new WaitCallback(parseFile);
+          //  ThreadPool.QueueUserWorkItem(cb, file);
+            //File.
+            parseFile(file);
         }
-        private static void parseFile(object f)
+        private static void parseFile(string file)
         {
-            string file = (string)f;
-            StreamReader reader = new StreamReader(file);
-            List<string> lines = new List<string>();
 
-            List<string> HeaderNames = new List<string>();
-            HeaderNames.Add("");
-            int u = 0;
-            bool FirstLine = true;
-            char nextread = (char)reader.Read();
-            while (FirstLine)
-            {
-                if (nextread == '\n')
-                {
-                    FirstLine = false;
-                    break;
-                    
-                }
-                else if (nextread == ',')
-                {
-                    HeaderNames.Add("");
-                    u++;
-                }
-                else
-                {
-                    HeaderNames[u] += nextread;
-                }
-                nextread = (char)reader.Read();
-            }
-            
-            while (!reader.EndOfStream)
-            {
-                lines.Add(reader.ReadLine());
-            }
-            reader.Close();
+            string[] FileLines = File.ReadAllLines(file);
             File.Delete(file);
-            Console.WriteLine("deleted file: "+file);
-
-            MySqlConnection Conn = AQT_Database.GetMYSQLConnection();
+            Console.WriteLine("deleted file: " + file);
+            string[] HeaderNames = FileLines[0].Split(',');
+        
             int MySQLInsertSuccesses = 0;
             int MySQLInsertFailures = 0;
             int ParseSuccesses = 0;
             int ParseFailures = 0;
-
-            //this depends on mysql installation
-            string inFilePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\temp.csv";
+            int TotalRecordsToInsert = 0;
             StreamWriter tempFile = new StreamWriter(inFilePath);
 
             try
             {
                 
                 string[] line = HeaderNames.ToArray();
-
+                TotalRecordsToInsert = line.Length - 2;//2 fields for date and time
                 List<string> OPCFieldNames = new List<string>();
 
                 for (int i = 2; i < line.Length; i++)
                 {
-                    OPCFieldNames.Add(line[i]);
+                    OPCFieldNames.Add( line[i]);
                 }
                 List<OPCField> FieldInfos = new List<OPCField>();
 
@@ -92,29 +61,26 @@ namespace OPCLib
                     }
                     FieldInfos.Add(F);
                 }
+
                 DateTime time;
 
-                int zz = 0;
-
-                Console.WriteLine(string.Format("lines to parse: {0} Fields per lines {1}", lines.Count(),OPCFieldNames.Count()));
-               
-                while (zz < lines.Count)
+                for (int zz = 1; zz < FileLines.Length; zz++)
                 {
-                    line = lines[zz].Split(',');
-                    
+                    line = FileLines[zz].Split(',');
                     time = DateTime.Parse(line[0] + " " + line[1]);
                     int i = 2;
-                    Console.WriteLine(string.Format("{0}",zz));
+
+                    Console.WriteLine(string.Format("{0}", zz));
                     while (i < line.Length)
                     {
                         try
                         {
                             float val;
-                            if (line[i].Contains("Fa") )
+                            if (line[i].Contains("Fa"))//BOOLEAN FIELD --> Text file has false in it
                             {
                                 val = 0;
                             }
-                            else if (line[i].Contains("Tr"))
+                            else if (line[i].Contains("Tr"))//BOOLEAN FIELD --> Text File has true in it
                             {
                                 val = 1;
                             }
@@ -122,48 +88,31 @@ namespace OPCLib
                             {
                                 val = float.Parse(line[i]);
                             }
+
                             ParseSuccesses++;
+
                             if (FieldInfos[i - 2] != null)
                             {
-                                try
-                                {
-                                    val *= FieldInfos[i - 2].Scale;
-                                    AQT_Database.WriteToFile(tempFile, FieldInfos[i - 2], val, time);
-
-                                    //AQT_Database.Load_To_AQT_Database(FieldInfos[i - 2], val, time, Conn);
-                                    MySQLInsertSuccesses++;
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                    MySQLInsertFailures++;
-                                }
-                            }
-                            else
-                            {
-                                MySQLInsertFailures++;
+                                val *= FieldInfos[i - 2].Scale;
+                                AQT_Database.WriteToFile(tempFile, FieldInfos[i - 2], val, time);
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             ParseFailures++;
                         }
                         i++;
                     }
-                    zz++;
                 }
-
                 tempFile.Close();
 
-                if (Conn.State == System.Data.ConnectionState.Closed)
+                if (Conn.State != System.Data.ConnectionState.Open)
                 {
                     Conn.Open();
                 }
-
                 try
                 {
-                    AQT_Database.WriteInFileToDatabase(Conn, inFilePath);
-
+                    MySQLInsertSuccesses = AQT_Database.WriteInFileToDatabase(Conn, inFilePath);
                 }
                 catch (Exception ex)
                 {
@@ -171,14 +120,14 @@ namespace OPCLib
                 }
                 try
                 {
-                    AQT_Database.WriteInFileToDatabaseMemTable(Conn, inFilePath);
+                    MySQLInsertSuccesses =  AQT_Database.WriteInFileToDatabaseMemTable(Conn, inFilePath);
                 }              
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-                Conn.Close();
-                Console.WriteLine(string.Format("Entries Parsed: {0}  Failed Parsed Entries: {1}   MySQL Successes: {2}  MySQL Failures: {3}", ParseSuccesses, ParseFailures, MySQLInsertSuccesses, MySQLInsertFailures));
+                MySQLInsertFailures = TotalRecordsToInsert - MySQLInsertSuccesses;
+                Console.WriteLine(string.Format("Inserted {0} records out of {1} @ {2}", MySQLInsertSuccesses, TotalRecordsToInsert,DateTime.Now.ToLongTimeString()));
             }
             catch (Exception ex)
             {
@@ -186,12 +135,11 @@ namespace OPCLib
             }
             finally
             {
-                reader.Close();
                 Conn.Close();
                 tempFile.Close();
                 File.Delete(inFilePath);
-
             }
+            
         }
     }
 }

@@ -17,6 +17,7 @@ namespace GenerateCFGFile
 
             string outFilePath = "";
             string AQT_Fields_To_Graph_QueryPath = "";
+            string UnitQueryFile = "";
 
             if (args.Length == 2)
             {
@@ -27,16 +28,20 @@ namespace GenerateCFGFile
             {
                 outFilePath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\output.txt";
                 AQT_Fields_To_Graph_QueryPath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\AQTQuerryV2.txt";
+                UnitQueryFile = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\UnitQuery.txt";
             }
 
             Console.Write(string.Format("Using outfile: {0}", outFilePath));
             Console.Write(string.Format("Using Query File: {0}", AQT_Fields_To_Graph_QueryPath));
+            Console.Write(string.Format("Using Unit Query File: {0}", UnitQueryFile));
             
             Thread.Sleep(1000);
 
             StreamReader Queries = new StreamReader(AQT_Fields_To_Graph_QueryPath);
             StreamWriter outFile = new StreamWriter(outFilePath);
             MySqlConnection conn = new MySqlConnection(Program.connStr);
+
+            string[] UnitLines = File.ReadAllLines( UnitQueryFile );
 
             try
             {
@@ -77,7 +82,6 @@ namespace GenerateCFGFile
                             Console.WriteLine(ex.Message);
                         }
                     }
-
                     foreach (string s in Names)
                     {
                         Console.WriteLine("Processing"+s);
@@ -93,6 +97,26 @@ namespace GenerateCFGFile
             {
                 outFile.Close();
                 Queries.Close();
+                conn.Close();
+            }
+
+
+            try
+            {
+                conn.Open();
+
+                foreach (string l in UnitLines)
+                {
+                    MySqlCommand c = new MySqlCommand(l, conn);
+                    c.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
                 conn.Close();
             }
         }

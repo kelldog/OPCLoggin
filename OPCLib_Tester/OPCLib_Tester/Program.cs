@@ -19,11 +19,6 @@ namespace OPCLib_Tester
         public static bool Running = true;
         public static FileSystemWatcher watcher;
 
-        public static Assembly OPCcode;
-        public static Type T;
-
-        public static object AO;
-        public static MethodInfo ParseMethod;
         static bool firstPass = true;
 
         static void Main(string[] args)
@@ -53,13 +48,9 @@ namespace OPCLib_Tester
             }
             if (e.ChangeType == WatcherChangeTypes.Changed || e.ChangeType == WatcherChangeTypes.Created)
             {
-                
                 Console.WriteLine("Log file Change event detected..." + e.FullPath);
                 watcher.EnableRaisingEvents = false;
-                 FileDataFetcher.ParseFile( e.FullPath );
-               // OPCLib.FileDataFetcher.ParseFile(e.FullPath);
-               // ParseMethod.Invoke(AO, new object[] { e.FullPath });
-               // FileDataFetcher.ParseFile(e.FullPath);
+                FileDataFetcher.ParseFile( e.FullPath );
                 watcher.EnableRaisingEvents = true;
             }
         }
