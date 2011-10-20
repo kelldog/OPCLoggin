@@ -18,3 +18,8 @@ C:\opc_test\OPCLib\OPCLib\bin\Release\OPCLib.pdb
 C:\opc_test\OPCLib\OPCLib\obj\Release\ResolveAssemblyReference.cache
 C:\opc_test\OPCLib\OPCLib\obj\Release\OPCLib.dll
 C:\opc_test\OPCLib\OPCLib\obj\Release\OPCLib.pdb
+C:\OPC_BACKEND_CODE\OPCLib\OPCLib\bin\Release\OPCLib.dll
+C:\OPC_BACKEND_CODE\OPCLib\OPCLib\bin\Release\OPCLib.pdb
+C:\OPC_BACKEND_CODE\OPCLib\OPCLib\obj\Release\ResolveAssemblyReference.cache
+C:\OPC_BACKEND_CODE\OPCLib\OPCLib\obj\Release\OPCLib.dll
+C:\OPC_BACKEND_CODE\OPCLib\OPCLib\obj\Release\OPCLib.pdb

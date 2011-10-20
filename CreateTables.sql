@@ -16,3 +16,20 @@ CREATE TABLE opc_data(
 ID SMALLINT,
 Time TIMESTAMP,
 Value FLOAT);
+
+
+CREATE TABLE `opc_data` (
+  `ID` smallint(6) DEFAULT NULL,
+  `Time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAM
+P,
+  `Value` float DEFAULT NULL,
+  KEY `id_index` (`ID`),
+  KEY `timestamp_index` (`Time`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
+
+
+
+CREATE TABLE opc_data_mem(
+ID SMALLINT,
+Time TIMESTAMP,
+Value FLOAT) ENGINE = MEMORY DEFAULT CHARSET=latin1 ;

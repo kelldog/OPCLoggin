@@ -21,3 +21,10 @@ C:\opc_test\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.exe
 C:\opc_test\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.pdb
 C:\opc_test\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib.dll
 C:\opc_test\OPCLib_Tester\OPCLib_Tester\obj\Debug\ResolveAssemblyReference.cache
+C:\OPC_BACKEND_CODE\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.exe.config
+C:\OPC_BACKEND_CODE\OPCLib_Tester\OPCLib_Tester\obj\Debug\OPCLib_Tester.exe
+C:\OPC_BACKEND_CODE\OPCLib_Tester\OPCLib_Tester\obj\Debug\OPCLib_Tester.pdb
+C:\OPC_BACKEND_CODE\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.exe
+C:\OPC_BACKEND_CODE\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib_Tester.pdb
+C:\OPC_BACKEND_CODE\OPCLib_Tester\OPCLib_Tester\bin\Debug\OPCLib.dll
+C:\OPC_BACKEND_CODE\OPCLib_Tester\OPCLib_Tester\obj\Debug\ResolveAssemblyReference.cache

@@ -160,13 +160,24 @@ namespace OPCLib
                     Conn.Open();
                 }
 
-                AQT_Database.WriteInFileToDatabase(Conn, inFilePath);
-                
+                try
+                {
+                    AQT_Database.WriteInFileToDatabase(Conn, inFilePath);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                try
+                {
+                    AQT_Database.WriteInFileToDatabaseMemTable(Conn, inFilePath);
+                }              
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 Conn.Close();
-
-                
-                
-
                 Console.WriteLine(string.Format("Entries Parsed: {0}  Failed Parsed Entries: {1}   MySQL Successes: {2}  MySQL Failures: {3}", ParseSuccesses, ParseFailures, MySQLInsertSuccesses, MySQLInsertFailures));
             }
             catch (Exception ex)

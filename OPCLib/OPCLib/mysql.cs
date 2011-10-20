@@ -29,6 +29,14 @@ namespace OPCLib
             MySqlCommand c = new MySqlCommand( command , conn);
             c.ExecuteNonQuery();
         }
+
+        public static void WriteInFileToDatabaseMemTable(MySqlConnection conn, string inFile)
+        {
+            string command = string.Format("LOAD DATA INFILE \'temp.csv\' INTO TABLE opc_data_mem \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';", inFile);
+            MySqlCommand c = new MySqlCommand(command, conn);
+            c.ExecuteNonQuery();
+        }
+
         public static void WriteToFile(StreamWriter fileout,OPCField F, float Value, DateTime Time)
         {
 	        string time = string.Format("{0}-{1}-{2} {3}:{4}:{5}.{6}", Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Second, Time.Millisecond);

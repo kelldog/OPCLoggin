@@ -54,7 +54,7 @@
   <ItemGroup>
     <Reference Include="OPCLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\OPCLib\OPCLib.dll</HintPath>
+      <HintPath>..\..\..\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\OPCLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

@@ -7,7 +7,6 @@ namespace OPCLib
 {
     public class OPCField
     {
-
         public string Name;
         public short ID;
         public float Scale;
