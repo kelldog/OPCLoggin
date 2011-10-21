@@ -15,3 +15,8 @@ C:\opc_test\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.pdb
 C:\opc_test\DatabaseBuilder\DatabaseBuilder\bin\Debug\DatabaseBuilder.exe
 C:\opc_test\DatabaseBuilder\DatabaseBuilder\bin\Debug\DatabaseBuilder.pdb
 C:\opc_test\DatabaseBuilder\DatabaseBuilder\obj\Debug\ResolveAssemblyReference.cache
+C:\OPC_BACKEND_CODE\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.exe
+C:\OPC_BACKEND_CODE\DatabaseBuilder\DatabaseBuilder\obj\Debug\DatabaseBuilder.pdb
+C:\OPC_BACKEND_CODE\DatabaseBuilder\DatabaseBuilder\bin\Debug\DatabaseBuilder.exe
+C:\OPC_BACKEND_CODE\DatabaseBuilder\DatabaseBuilder\bin\Debug\DatabaseBuilder.pdb
+C:\OPC_BACKEND_CODE\DatabaseBuilder\DatabaseBuilder\obj\Debug\ResolveAssemblyReference.cache

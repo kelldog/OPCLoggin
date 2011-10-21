@@ -10,6 +10,7 @@ using System.Xml;
 using System.IO;
 using System.Threading;
 
+using System.Diagnostics;
 using MySql.Data.MySqlClient;
 
 
@@ -129,7 +130,7 @@ namespace DatabaseBuilder
                 OPCFields.AddRange(ProcessDataQuery(station, ToolServer));
             }
 
-            GetFromItemTable(OPCFields, ToolServer);
+            GetFromItemTable( OPCFields , ToolServer );
 
             MySqlConnection Conn = AQT_Database.GetMYSQLConnection();
             Conn.Open();
@@ -151,7 +152,7 @@ namespace DatabaseBuilder
                 F.Name = o.OPC_Lookup;
                 F.Scale = o.ScaleFactor;
                 Console.WriteLine("added: " + F.Name);
-                AQT_Database.FieldInsert(F, Conn);
+              //  AQT_Database.FieldInsert(F, Conn);
             }
             Conn.Close();
         }
@@ -254,64 +255,88 @@ namespace DatabaseBuilder
             List<OPCField_ex> fields = new List<OPCField_ex>();
             int allreadyhave = 0;
 
-            Console.Write("enumerating all opc items");
+            Console.Write("enumerating all opc items to pull OPC Scale Factor");
+
             try
             {
                 while (mReader.Read())
                 {
+                    OPCField_ex f = new OPCField_ex();
+
+                    f.ClientTopicID = (string)mReader["ClientTopicID"];
+
+                    string test = f.ClientTopicID;
+                    Debug.WriteLine(test);
+                    if (!test.Contains("STATION"))
+                    {
+                        continue;
+                    }
+
+                    f.DataType = GetTypeFromNum((Int32)mReader["DataType"]);
+                    f.Type = (Int32)mReader["DataType"];
+                    // Console.Write(".");
+                    f.ScaleFactor = (float)mReader["OPCScaleFactor"];
+
+                    string number = f.ClientTopicID.Substring(f.ClientTopicID.IndexOf("STATION") + 7, 2);
+                    int n = int.Parse(number);
+
+                    if (n < 99 && n < 0)
+                    {
+                        throw new Exception();
+                    }
+
+                    f.StationInfo = GetStationFromNumber(n);
+
+                    f.ClientItemID = (string)mReader["ClientItemID"];
                     try
                     {
-                        OPCField_ex f = new OPCField_ex();
-                        f.DataType = GetTypeFromNum( (Int32)mReader["DataType"] );
-                        f.Type = (Int32)mReader["DataType"];
-                        Console.Write(".");
-                        f.ScaleFactor = (float)mReader["OPCScaleFactor"];
-                        f.ClientTopicID = (string)mReader["ClientTopicID"];
-                        try
-                        {
-                            string number = f.ClientTopicID.Substring(f.ClientTopicID.IndexOf("STATION") + 7, 2);
-                            int n = int.Parse(number);
-
-                            if (n < 99 && n < 0)
-                            {
-                                throw new Exception();
-                            }
-
-                            f.StationInfo = GetStationFromNumber(n);
-                        }
-                        catch
-                        {
-                            f.StationInfo = null;
-                        }
-                        f.ClientItemID = (string)mReader["ClientItemID"];
                         f.OPCItemID = (string)mReader["OPCItemID"];
-                        f.OPCprefix = (string)mReader["OPCPrefix"];
-                        f.OPCTopicID = (string)mReader["OPCTopicID"];
-                        int count = OPCFields.Where(n => n.OPC_Lookup == f.OPC_Lookup).Count();
-                        if (count == 0)
-                        {
-                            OPCFields.Add(f);
-                            string stationT = "NULL";
-                            if(f.StationInfo != null)
-                            {
-                                stationT = f.StationInfo.StationID.ToString();
-                            }
-                            Console.WriteLine(string.Format("Added field: {0} scale {1} station {2}",f.OPC_Lookup,f.ScaleFactor,stationT));
-                        }
-                        else
-                        {
-                            allreadyhave++;
-                        }
                     }
-                    catch (Exception ex)
+                    catch
                     {
 
                     }
+                    try
+                    {
+                        f.OPCprefix = (string)mReader["OPCPrefix"];
+                    }
+                    catch
+                    {
+
+                    }
+                    try
+                    {
+                        f.OPCTopicID = (string)mReader["OPCTopicID"];
+                    }
+                    catch
+                    {
+
+                    }
+                    OPCField_ex AlreadExist = OPCFields.Where(b => b.OPC_Lookup == f.OPC_Lookup).First();
+                    if (AlreadExist == null)
+                    {
+                        OPCFields.Add(f);
+                        string stationT = "NULL";
+                        if(f.StationInfo != null)
+                        {
+                            stationT = f.StationInfo.StationID.ToString();
+                        }
+                        Console.WriteLine(string.Format("Added field: {0} scale {1} station {2}",f.OPC_Lookup,f.ScaleFactor,stationT));
+                    }
+                    else
+                    {
+                        allreadyhave++;
+                        if (AlreadExist.ScaleFactor != f.ScaleFactor)
+                        {
+
+                        }
+                    }
+
                 }
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
             finally
             {

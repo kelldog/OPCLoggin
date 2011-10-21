@@ -93,7 +93,7 @@ namespace OPCLib
 
                             if (FieldInfos[i - 2] != null)
                             {
-                                val *= FieldInfos[i - 2].Scale;
+                                val /= FieldInfos[i - 2].Scale;
                                 AQT_Database.WriteToFile(tempFile, FieldInfos[i - 2], val, time);
                             }
                         }
