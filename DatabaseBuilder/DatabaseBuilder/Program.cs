@@ -39,13 +39,14 @@ namespace DatabaseBuilder
 
         public static void FieldInsert(OPCField F, MySqlConnection Conn)
         {
-            MySqlCommand c = new MySqlCommand("INSERT INTO fields (Scale,Name,StationID,StationTypeID,ChamberTypeID, TypeID) VALUES (@sc, @nm, @SID, @STID,@CHTID,@TI)", Conn);
+            MySqlCommand c = new MySqlCommand("INSERT INTO fields (Scale,Name,StationID,StationTypeID,ChamberTypeID, Type,Units) VALUES (@sc, @nm, @SID, @STID,@CHTID,@TI,@Un)", Conn);
             c.Parameters.Add(FillP( "@sc", F.Scale, MySqlDbType.Float ));
             c.Parameters.Add(FillP( "@nm", F.Name, MySqlDbType.VarChar ));
             c.Parameters.Add(FillP( "@SID", F.StationID, MySqlDbType.Int32 ));
             c.Parameters.Add(FillP( "@STID", F.StationTypeID, MySqlDbType.Int32 ));
             c.Parameters.Add(FillP( "@CHTID", F.ChamberTypeID, MySqlDbType.Int32 ));
-            c.Parameters.Add(FillP("@TI", F.TypeID, MySqlDbType.Int32));
+            c.Parameters.Add(FillP("@TI", F.Type, MySqlDbType.VarChar));
+            c.Parameters.Add(FillP("@Un", F.Units, MySqlDbType.VarChar));
             //UNITS
             //Comments
             //AQT_Name
@@ -125,10 +126,10 @@ namespace DatabaseBuilder
              StationInfoList = GetDistinctStations(CellWork);
 
             //add all available OPC fields for each station
-            foreach (OPCStationInfo station in StationInfoList)
-            {
-                OPCFields.AddRange(ProcessDataQuery(station, ToolServer));
-            }
+           // foreach (OPCStationInfo station in StationInfoList)
+           // {
+           //     OPCFields.AddRange(ProcessDataQuery(station, ToolServer));
+           // }
 
             GetFromItemTable( OPCFields , ToolServer );
 
@@ -148,11 +149,12 @@ namespace DatabaseBuilder
                     F.StationTypeID = o.StationInfo.StationTypeID;
                     F.ChamberTypeID = o.StationInfo.ChamberTypeID;
                 }
-                F.TypeID = o.Type;
+                F.Type = o.Type;
                 F.Name = o.OPC_Lookup;
                 F.Scale = o.ScaleFactor;
+                F.Units = o.units;
                 Console.WriteLine("added: " + F.Name);
-              //  AQT_Database.FieldInsert(F, Conn);
+                AQT_Database.FieldInsert(F, Conn);
             }
             Conn.Close();
         }
@@ -221,19 +223,19 @@ namespace DatabaseBuilder
                 f.RequestFromOPC = false;
                 f.OPCprefix = mReader.GetString(4);
                 f.OPCTopicID = mReader.GetString(5);
-                f.Type = (Int32)mReader["DataType"];
+                //f.Type = (Int32)mReader["DataType"];********************************
                 try
                 {
-                    f.DataType = GetTypeFromNum((Int32)mReader["DataType"]);
+                  //  f.DataType = GetTypeFromNum((Int32)mReader["DataType"]);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message+"  "+mReader.GetString(9));
                 }
-                if (f.DataType != typeof(float))
-                {
+               // if (f.DataType != typeof(float))
+               // {
 
-                }
+               // }
                 fields.Add(f);
             }
 
@@ -245,11 +247,41 @@ namespace DatabaseBuilder
         public static void GetFromItemTable(List<OPCField_ex> OPCFields, string ToolServer)
         {
 
+            Dictionary<int,string> UnitLookup = new Dictionary<int,string>();
+            Dictionary<int, string> TypeLookup = new Dictionary<int, string>();
+
+
             OleDbCommand mCommand = new OleDbCommand("SELECT * FROM Items WHERE 1");
             mCommand.CommandType = CommandType.Text;
             OleDbConnection mConnection = new OleDbConnection(ToolServer);
             mConnection.Open();
             mCommand.Connection = mConnection;
+
+            OleDbCommand FillDictionary = new OleDbCommand("SELECT UnitType,UnitTypeName FROM UnitType WHERE 1");
+            FillDictionary.CommandType = CommandType.Text;
+            FillDictionary.Connection = mConnection;
+            OleDbDataReader FillReader = FillDictionary.ExecuteReader();
+
+            while(FillReader.Read())
+            {
+                UnitLookup.Add((int)FillReader[0],(string)FillReader[1]);
+            }
+
+            FillReader.Close();
+
+
+            OleDbCommand FillDictionaryType = new OleDbCommand("SELECT DataType,DataTypeName FROM DataType WHERE 1");
+            FillDictionaryType.CommandType = CommandType.Text;
+            FillDictionaryType.Connection = mConnection;
+            OleDbDataReader FillReaderType = FillDictionaryType.ExecuteReader();
+
+            while (FillReaderType.Read())
+            {
+                TypeLookup.Add((int)FillReaderType[0], (string)FillReaderType[1]);
+            }
+
+            FillReaderType.Close();
+
             OleDbDataReader mReader;
             mReader = mCommand.ExecuteReader();
             List<OPCField_ex> fields = new List<OPCField_ex>();
@@ -272,10 +304,21 @@ namespace DatabaseBuilder
                         continue;
                     }
 
-                    f.DataType = GetTypeFromNum((Int32)mReader["DataType"]);
-                    f.Type = (Int32)mReader["DataType"];
+                   // f.DataType =
+                    f.Type = TypeLookup[(int)mReader["DataType"]];
                     // Console.Write(".");
                     f.ScaleFactor = (float)mReader["OPCScaleFactor"];
+
+                    if(  mReader["UnitType"].GetType() == typeof(System.DBNull) )
+                    {
+ 
+                    }
+                    else
+                    {
+                        int lookup_unit = (int)mReader["UnitType"];
+
+                        f.units = UnitLookup[lookup_unit];
+                    }
 
                     string number = f.ClientTopicID.Substring(f.ClientTopicID.IndexOf("STATION") + 7, 2);
                     int n = int.Parse(number);
@@ -294,7 +337,7 @@ namespace DatabaseBuilder
                     }
                     catch
                     {
-
+                        continue;
                     }
                     try
                     {
@@ -312,9 +355,9 @@ namespace DatabaseBuilder
                     {
 
                     }
-                    OPCField_ex AlreadExist = OPCFields.Where(b => b.OPC_Lookup == f.OPC_Lookup).First();
-                    if (AlreadExist == null)
-                    {
+                   // OPCField_ex AlreadExist = OPCFields.Where(b => b.OPC_Lookup == f.OPC_Lookup).First();
+                   // if (AlreadExist == null)
+                  //  {
                         OPCFields.Add(f);
                         string stationT = "NULL";
                         if(f.StationInfo != null)
@@ -322,15 +365,15 @@ namespace DatabaseBuilder
                             stationT = f.StationInfo.StationID.ToString();
                         }
                         Console.WriteLine(string.Format("Added field: {0} scale {1} station {2}",f.OPC_Lookup,f.ScaleFactor,stationT));
-                    }
-                    else
-                    {
-                        allreadyhave++;
-                        if (AlreadExist.ScaleFactor != f.ScaleFactor)
-                        {
+                  //  }
+                   // else
+                  //  {
+                   //     allreadyhave++;
+                   //     if (AlreadExist.ScaleFactor != f.ScaleFactor)
+                   //     {
 
-                        }
-                    }
+                    //    }
+                   // }
 
                 }
             }

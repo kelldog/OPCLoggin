@@ -18,6 +18,7 @@ namespace OPCLib_Tester
     {
         public static bool Running = true;
         public static FileSystemWatcher watcher;
+        public static string DirToWatch = @"C:\OPCDataLogger\OPCDataLogger\Log Data";
 
         static bool firstPass = true;
 
@@ -28,10 +29,12 @@ namespace OPCLib_Tester
           //  AO = Activator.CreateInstance(T);
           //  ParseMethod = T.GetMethod("ParseFile");
          //   FileDataFetcher fetcher = FileDataFetcher.ParseFile(
-            watcher = new FileSystemWatcher(@"C:\OPCDataLogger\OPCDataLogger\Log Data", "*.csv");
+            watcher = new FileSystemWatcher( DirToWatch , "*.csv");
             watcher.Changed += new FileSystemEventHandler(watcher_Changed);
             watcher.EnableRaisingEvents = true;
 
+            Console.WriteLine("Waiting for files @ Dir: " + @"C:\OPCDataLogger\OPCDataLogger\Log Data");
+            
             while (Running)
             {
                 Thread.Sleep(300);

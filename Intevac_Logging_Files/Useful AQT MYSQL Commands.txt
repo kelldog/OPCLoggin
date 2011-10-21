@@ -1,0 +1,9 @@
+TRUNCATE TABLE tablename;
+
+ALTER TABLE tableName AUTO_INCREMENT = 1;
+
+SHOW CREATE TABLE tablename;
+
+SELEC * INTO OUTFILE "C:\yoyo.tsv" FROM tablename;
+
+"SELECT DISTINCT Client_Name FROM Portfolio ORDER BY Client_Name ASC";

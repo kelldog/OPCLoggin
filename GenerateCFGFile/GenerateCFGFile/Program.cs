@@ -28,7 +28,7 @@ namespace GenerateCFGFile
             {
                 outFilePath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\output.txt";
                 AQT_Fields_To_Graph_QueryPath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\AQTQuerryV2.txt";
-                UnitQueryFile = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\UnitQuery.txt";
+                UnitQueryFile = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\UnitsUpdateQuery.txt";
             }
 
             Console.Write(string.Format("Using outfile: {0}", outFilePath));
@@ -37,18 +37,19 @@ namespace GenerateCFGFile
             
             Thread.Sleep(1000);
 
-            StreamReader Queries = new StreamReader(AQT_Fields_To_Graph_QueryPath);
+            string[] Queries = File.ReadAllLines(AQT_Fields_To_Graph_QueryPath);
+            string[] UnitLines = File.ReadAllLines(UnitQueryFile);
+
             StreamWriter outFile = new StreamWriter(outFilePath);
             MySqlConnection conn = new MySqlConnection(Program.connStr);
 
-            string[] UnitLines = File.ReadAllLines( UnitQueryFile );
+            
 
             try
             {
                 conn.Open();
-                while (!Queries.EndOfStream)
+                foreach(string next in Queries)
                 {
-                    string next = Queries.ReadLine();
                     if (!next.Contains("SELECT"))
                     {
                         continue;
@@ -71,7 +72,7 @@ namespace GenerateCFGFile
 
                     foreach (int id in IDs)
                     {
-                        MySqlCommand c2 = new MySqlCommand(string.Format("INSERT INTO aqt_fields (ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,TypeID) SELECT ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,TypeID FROM fields WHERE ID = {0}", id), conn);
+                        MySqlCommand c2 = new MySqlCommand(string.Format("INSERT INTO aqt_fields (ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type) SELECT ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type FROM fields WHERE ID = {0}", id), conn);
                         try
                         {
                             c2.ExecuteNonQuery();
@@ -96,11 +97,10 @@ namespace GenerateCFGFile
             finally
             {
                 outFile.Close();
-                Queries.Close();
                 conn.Close();
             }
 
-
+           // /*
             try
             {
                 conn.Open();
@@ -119,6 +119,7 @@ namespace GenerateCFGFile
             {
                 conn.Close();
             }
+            //*/
         }
     }
 }

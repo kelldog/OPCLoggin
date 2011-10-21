@@ -10,5 +10,6 @@ namespace OPCLib
         public string Name;
         public short ID;
         public float Scale;
+        public string Type;
     }
 }

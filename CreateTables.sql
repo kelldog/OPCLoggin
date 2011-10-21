@@ -1,35 +1,38 @@
-CREATE TABLE fields(
-ID SMALLINT NOT NULL AUTO_INCREMENT, 
-PRIMARY KEY(ID),
-Name VARCHAR(250),
-Scale REAL,
-StationID INT,
-StationTypeID INT,
-ChamberTypeID INT,
-Units VARCHAR(150),
-AQT_Name VARCHAR(50),
-TypeID INT,
-Comments VARCHAR(350)
-);
-
-CREATE TABLE opc_data(
-ID SMALLINT,
-Time TIMESTAMP,
-Value FLOAT);
-
-
-CREATE TABLE `opc_data` (
-  `ID` smallint(6) DEFAULT NULL,
-  `Time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAM
-P,
-  `Value` float DEFAULT NULL,
-  KEY `id_index` (`ID`),
-  KEY `timestamp_index` (`Time`)
+CREATE TABLE `fields` (
+  `ID` smallint(6) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(250) DEFAULT NULL,
+  `Scale` double DEFAULT NULL,
+  `StationID` int(11) DEFAULT NULL,
+  `StationTypeID` int(11) DEFAULT NULL,
+  `ChamberTypeID` int(11) DEFAULT NULL,
+  `Units` varchar(150) DEFAULT NULL,
+  `AQT_Name` varchar(50) DEFAULT NULL,
+  `Type` varchar(10) DEFAULT NULL,
+  `Comments` varchar(350) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 |
 
 
 
-CREATE TABLE opc_data_mem(
-ID SMALLINT,
-Time TIMESTAMP,
-Value FLOAT) ENGINE = MEMORY DEFAULT CHARSET=latin1 ;
+CREATE TABLE `aqt_fields` (
+  `ID` smallint(6) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(250) DEFAULT NULL,
+  `Scale` double DEFAULT NULL,
+  `StationID` int(11) DEFAULT NULL,
+  `StationTypeID` int(11) DEFAULT NULL,
+  `ChamberTypeID` int(11) DEFAULT NULL,
+  `Units` varchar(150) DEFAULT NULL,
+  `AQT_Name` varchar(50) DEFAULT NULL,
+  `Type` varchar(10) DEFAULT NULL,
+  `Comments` varchar(350) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15626 DEFAULT CHARSET=latin1 |
+
+
+CREATE TABLE `opc_data_mem` (
+  `ID` smallint(6) DEFAULT NULL,
+  `Time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Value` float DEFAULT NULL,
+  KEY `ID_index` (`ID`),
+  KEY `Time_index` (`Time`)
+) ENGINE=MEMORY DEFAULT CHARSET=latin1 

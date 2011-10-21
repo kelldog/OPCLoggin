@@ -56,19 +56,22 @@ namespace OPCLib
         public static OPCField GetFieldInfo(string Name, MySqlConnection conn)
         {
            
-            Name = Name.TrimEnd('\r', ' ', '\n');
-            Name = Name.TrimStart('\r', ' ', '\n');
-            string querry = "SELECT * FROM aqt_fields WHERE Name='" + Name+"'";
-           // Console.WriteLine(querry);
-            MySqlCommand c = new MySqlCommand(querry, conn);
+
             if (CachedFields.ContainsKey(Name))
             {
                 return CachedFields[Name];
             }
+
             if (conn.State == System.Data.ConnectionState.Closed)
             {
                 conn.Open();
             }
+
+            Name = Name.TrimEnd('\r', ' ', '\n');
+            Name = Name.TrimStart('\r', ' ', '\n');
+            string querry = "SELECT * FROM aqt_fields WHERE Name='" + Name + "'";
+            // Console.WriteLine(querry);
+            MySqlCommand c = new MySqlCommand(querry, conn);
             OPCField Field = null;
             MySqlDataReader reader = c.ExecuteReader();
 
@@ -81,6 +84,7 @@ namespace OPCLib
                     Field.ID = reader.GetInt16("ID");
                     Field.Name = (string)reader["Name"];
                     Field.Scale = reader.GetFloat("Scale");
+                    Field.Type = (string)reader["Type"];
                 }
             }
             finally

@@ -14,7 +14,7 @@ namespace DatabaseBuilder
         public float ScaleFactor;
         public OPCStationInfo StationInfo;
         public bool RequestFromOPC;
-        public int Type;
+        public string Type;
         public string OPCprefix;
         public string OPCTopicID;
         public string units;
@@ -23,7 +23,7 @@ namespace DatabaseBuilder
         public List<byte> WindowNums;
         public float Preferred_Window_Width;
 
-        public Type DataType;
+  //      public Type DataType;
 
 
         public string OPC_Lookup

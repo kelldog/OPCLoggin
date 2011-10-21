@@ -1,0 +1,7 @@
+UPDATE aqt_fields SET Units="Volts" WHERE Name like('%_VOLTAGE_READBACK');
+UPDATE aqt_fields SET Units="mA" WHERE Name like('%CURRENT_READBACK');
+UPDATE aqt_fields SET Units="mT" WHERE Name like('%CAP_MAN_READBACK');
+UPDATE aqt_fields SET Units="IN/OUT" WHERE Name like('%_CLOSED');
+UPDATE aqt_fields SET Units="kWatts" WHERE Name like('%_POWER_B_READBACK');
+UPDATE aqt_fields SET Units="sccm" WHERE Name like('%_FLOW_READBACK');
+UPDATE aqt_fields SET Units='kWatts' WHERE Name like('%HVPS_POWER%');
