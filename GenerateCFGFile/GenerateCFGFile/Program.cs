@@ -26,9 +26,9 @@ namespace GenerateCFGFile
             }
             else
             {
-                outFilePath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\output.txt";
-                AQT_Fields_To_Graph_QueryPath = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\AQTQuerryV2.txt";
-                UnitQueryFile = @"C:\Users\administrator.AQTSOLAR\Desktop\Intevac_Logging_Files\UnitsUpdateQuery.txt";
+                outFilePath = @"C:\OPC_BACKEND_CODE\Intevac_Logging_Files\output.txt";
+                AQT_Fields_To_Graph_QueryPath = @"C:\OPC_BACKEND_CODE\Intevac_Logging_Files\AQTQuerryV2.txt";
+                UnitQueryFile = @"C:\OPC_BACKEND_CODE\Intevac_Logging_Files\UnitsUpdateQuery.txt";
             }
 
             Console.Write(string.Format("Using outfile: {0}", outFilePath));

@@ -15,7 +15,7 @@ CREATE TABLE `fields` (
 
 
 CREATE TABLE `aqt_fields` (
-  `ID` smallint(6) NOT NULL AUTO_INCREMENT,
+  `ID` smallint(6) NOT NULL,
   `Name` varchar(250) DEFAULT NULL,
   `Scale` double DEFAULT NULL,
   `StationID` int(11) DEFAULT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE `aqt_fields` (
   `Type` varchar(10) DEFAULT NULL,
   `Comments` varchar(350) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15626 DEFAULT CHARSET=latin1 |
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
 
 CREATE TABLE `opc_data_mem` (

@@ -18,10 +18,10 @@ namespace OPCLib
 
         public static void ParseFile(string file)
         {
-          //  WaitCallback cb = new WaitCallback(parseFile);
-          //  ThreadPool.QueueUserWorkItem(cb, file);
-            //File.
-            parseFile(file);
+              //WaitCallback cb = new WaitCallback(parseFile);
+              //ThreadPool.QueueUserWorkItem(cb, file);
+              //File
+              parseFile(file);
         }
         private static void parseFile(string file)
         {
@@ -127,7 +127,7 @@ namespace OPCLib
                     Console.WriteLine(ex.Message);
                 }
                 MySQLInsertFailures = TotalRecordsToInsert - MySQLInsertSuccesses;
-                Console.WriteLine(string.Format("Inserted {0} records out of {1} @ {2}", MySQLInsertSuccesses, TotalRecordsToInsert,DateTime.Now.ToLongTimeString()));
+                Console.WriteLine(string.Format("Inserted {0} records out of {1} @ {2} on {3}", MySQLInsertSuccesses, TotalRecordsToInsert,DateTime.Now.ToLongTimeString() , DateTime.Now.ToLongDateString()));
             }
             catch (Exception ex)
             {
