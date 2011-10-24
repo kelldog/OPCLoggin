@@ -1,0 +1,293 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	
+	<title>AQT Visualizer</title>
+	<link rel="stylesheet" href="css/style.css?v=2">
+	<link rel="stylesheet" href="css/jquery-ui-1.8.5.custom.css">
+
+	<script src="js/libs/modernizr-1.7.min.js"></script>
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load('visualization', '1', {'packages':['annotatedtimeline','motionchart']});
+		var chart = '';
+		var staIDs = new Array();
+		var url = '';
+		var intval = '';
+		var run = 0;
+		var rate = 4000; // refresh rate in ms
+		var mem_table_timestamp_oldest_record;
+		google.setOnLoadCallback(setupChart);
+		
+		function JSON2CSV(objArray)
+		{
+		    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+		    var str = '';
+		 
+		    for (var i = 0; i < array.length; i++) {
+		        var line = '';
+		        for (var index in array[i]) {
+		            if(line != '') line += ','
+		            line += array[i][index];
+		        }
+		        str += line + '\r\n';
+		    }
+		 
+		    if (navigator.appName != 'Microsoft Internet Explorer') {
+		        window.open('data:text/csv;charset=utf-8,' + escape(str));
+		    }
+		    else {
+		        var popup = window.open('','csv','');
+		        popup.document.body.innerHTML = '<pre>' + str + '</pre>';
+		    }
+		}
+		
+		function togRun(i) {
+			if (i>0){
+				rate = i;
+			}
+			if (run == 0){
+				loadChart();
+				intval = setInterval('loadChart()', rate);
+				$('#ctrlBut').attr('value','Stop');
+				run = 1;
+			}
+			else {
+				window.clearInterval(intval);
+				$('#ctrlBut').attr('value','Start');
+				run = 0;
+			}
+		}
+		
+		function getSaves(sName){
+			$('.saves').unbind('change');
+			$('.saves').load("getSaves.php?q=s", function(){
+				$('.saves option:contains("'+sName+'")').attr('selected','selected');
+				$('.saves').change(function(){
+					getSave($(this).val());
+				});
+			});
+		}
+		
+		function getSave(id){
+			$('.fRow').remove();
+			if (!id){
+				addRow();
+				return false;
+			}
+			$.getJSON("getSaves.php",{q: 'si',id: id},function(json){
+				var i = 0;
+				$.each(json, function(i,d){
+					addRow(d.station_id,d.field_id);
+				});
+			});
+		}
+		
+		function writeSave() {
+			if ($('#sName').val()){
+				$('#saveBut').hide();
+				$('#save').append('<div class="load refresh"><img src="images/ajax-loader.gif" /></div>');
+				var sids = [];
+				var fids = [];
+				$('.sID').each(function(){
+					sids.push($(this).val());
+				});
+				$('.fName').each(function(){
+					fids.push($(this).val());
+				});
+				$.getJSON('getSaves.php', {q: 'sv', n:$('#sName').val(),sid: sids, fid: fids}, function(json){
+					$('#saveBut').show();
+					$('.load').remove();
+					getSaves($('#sName').val());
+					$('#sName').val('');
+					$('#wStatus').hide().html(json.r).fadeIn('slow').delay(2000).fadeOut('slow');
+				});
+			} else {
+				alert('State name must not be blank!');
+			}
+		}
+		
+		function delSave() {
+			if ($('.saves').val() != 0){
+				$('#delBut').hide();
+				$('#delete').append('<div class="load refresh"><img src="images/ajax-loader.gif" /></div>');
+				$.getJSON('getSaves.php', {q: 'ds',sid: $('.saves').val()}, function(json){
+					$('#delBut').show();
+					$('.load').remove();
+					getSaves();
+					$('#wStatus').hide().html(json.r).fadeIn('slow').delay(2000).fadeOut('slow');
+				});
+			} else {
+				alert('No saved state selected!');
+			}
+		}
+
+		function setupChart() {
+
+		    getFirstTimeStampFromMEM();
+			var data = new google.visualization.DataTable();
+			data.addColumn('datetime', 'Date');
+			data.addColumn('number', 'Data');
+			chart = new google.visualization.AnnotatedTimeLine(document.getElementById('timelineDiv'));
+			chart.draw(data, {'legendPosition': 'newRow', 'wmode': 'opaque', 'allowRedraw': 'true'});
+			$.getJSON("getData.php",{q: 's'},function(json){
+				$.each(json, function(i,d){
+					staIDs.push(d.stationid);
+				});
+				addRow();
+		  	});
+			$('.add').live('click',function(){
+				addRow();
+			});
+			$('.del').live('click',function(){
+				$(this).parent().remove();
+			});
+			$('#refreshBut').click(function(){
+				loadChart($('#startDate').val(),$('#endDate').val());
+			});
+			$('#saveBut').click(writeSave);
+			$('#delBut').click(delSave);
+			$('.date').datetimepicker({
+				timeFormat: 'hh:mm:ss',
+				dateFormat: 'yy-mm-dd'
+			});
+			$('#ctrlBut').click(togRun);
+			getSaves();
+		}
+		
+		function addRow(s,f){
+				$('.add').attr('src','images/delete.png').attr('class','del');;
+				var row = "<div class='fRow'><div class='rowElemID'><select class='sID'>";
+				$.each(staIDs, function(i,d){
+					row += '<option>'+d+'</option>';
+				});
+				row +="</select></div><div class='rowElemF'><select class='fName'></select></div><img class='add' style='cursor: pointer' src='images/add.png' /></div>";
+				$('#selectDiv').append(row);
+				if (s){
+					$('.sID').last().val(s);
+				}
+				$('.sID').last().parent().next().find('.fName').load("getData.php?q=f&id="+$('.sID').last().val()+"&fid="+f, function(){
+					$('.sID').change(function(){
+						$(this).parent().next().find('.fName').load("getData.php?q=f&id="+$(this).val());
+					});
+				});
+	
+		}
+
+		function getFirstTimeStampFromMEM() 
+        {
+
+		    url = $.param({ q: 'z' });
+		    url = 'getData.php?' + url;
+
+		    $.post(url, function (data) 
+            {
+               // alert("Data Loaded: " + data);
+            });
+        }
+
+
+        function loadChart(sd, ed)
+        {
+			$('#refreshBut').hide();
+			$('#refresh').append('<div class="load refresh"><img src="images/ajax-loader.gif" /></div>');
+			var fids = [];
+			$('.fName').each(function(){
+				fids.push($(this).val());
+			});
+			url = $.param({q:'d',fid:fids});
+			url = 'getData.php?'+url;
+			console.log(url);
+			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed }, function (json) {
+			    if (json.table.rows) {
+			        $.each(json.table.rows, function (i, d) {
+			            d.c[0].v = new Date(d.c[0].v * 1000);
+			        });
+			        var data = new google.visualization.DataTable(json.table);
+			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' });
+			        $('#refreshBut').show();
+			        $('.load').remove();
+			        
+			    } else {
+			        alert('No data returned. Tool must have been running in the last couple of minutes for data to be returned.');
+			        togRun(0);
+			        $('#refreshBut').show();
+			        $('.load').remove();
+			        return false;
+			    }
+			});
+		}
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div style='height: 75px;'>
+			<img class="header" src='images/logo_aqt.gif'></img>
+			<div class="header">Data Visualizer</div>
+		</div>
+
+		<div id="main" role="main">
+			<div id="timelineDiv"></div>
+			<div id='botDiv'>
+				<div id='selectDiv'>
+					<div class='row'>
+						<span id='dHeader'><h2>Choose Saved State:</h2></span>
+						<div id='saveDiv'><select class='saves' style='margin-left: 20px;'></select></div>
+						<input id='sName' type='text' size='20' value='' />
+						<span id='save'><input id='saveBut' type='button' value='Save State' /></span>
+						<span id='delete'><input id='delBut' type='button' value='Delete Current State' /></span>
+						<div id='wStatus'></div>
+					</div>
+					<div class='row'>
+						<span id='dHeader'><h2>Choose Data:</h2></span>
+					</div>
+					<div class='row'>
+						<div class='rowElemID'>Station ID</div>
+						<div class='rowElemF'>Data Field</div>
+					</div>
+				</div>
+				<div id='ctrlDiv'>
+					<div class='row'>
+						<span id='dHeader'><h2>Choose Date:</h2></span>
+					</div>
+					<div class='ctrlRow'>
+						<input type='text' id='startDate' class='date' placeholder='Start Date' />
+						<input type='text' id='endDate' class='date' placeholder='End Date' />
+					</div>
+					<div class='ctrlRow'>
+						<span id='refresh'><input type='button' id='refreshBut' value='Reload Chart'/></span>
+					</div>
+					<div class='row'>
+						<span id='dHeader'><h2>Run Live:</h2></span>
+					</div>
+					<div class='ctrlRow'>
+						<span id='refresh'><input type='button' id='ctrlBut' value='Start'/></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+	<script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.5.1.min.js"%3E%3C/script%3E'))</script>
+	<script src="js/libs/jquery-ui-1.8.5.custom.min.js"></script>
+	<script src="js/libs/jquery-ui-timepicker-addon-0.6.js"></script>
+	
+	<!--[if lt IE 7 ]>
+	<script src="js/libs/dd_belatedpng.js"></script>
+	<script> DD_belatedPNG.fix('img, .png_bg');</script>
+	<![endif]-->
+	<script>
+		var _gaq=[['_setAccount','UA-1602064-4'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
+		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+		g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+		s.parentNode.insertBefore(g,s)}(document,'script'));
+	</script>
+</body>
+</html>
