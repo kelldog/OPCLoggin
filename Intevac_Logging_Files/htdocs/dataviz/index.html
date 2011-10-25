@@ -22,7 +22,7 @@
 		var intval = '';
 		var run = 0;
 		var rate = 4000; // refresh rate in ms
-		var mem_table_timestamp_oldest_record;
+		var table_switch;
 		google.setOnLoadCallback(setupChart);
 		
 		function JSON2CSV(objArray)
@@ -186,15 +186,15 @@
 		    url = $.param({ q: 'z' });
 		    url = 'getData.php?' + url;
 
-		    $.post(url, function (data) 
-            {
-               // alert("Data Loaded: " + data);
-            });
+		    $.post(url, function (data) {
+		        // alert("Data Loaded: " + data);
+		        //alert(data);
+		        table_switch = data;
+		    });
         }
 
 
-        function loadChart(sd, ed)
-        {
+        function loadChart(sd, ed) {
 			$('#refreshBut').hide();
 			$('#refresh').append('<div class="load refresh"><img src="images/ajax-loader.gif" /></div>');
 			var fids = [];
@@ -204,7 +204,7 @@
 			url = $.param({q:'d',fid:fids});
 			url = 'getData.php?'+url;
 			console.log(url);
-			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed }, function (json) {
+			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed ,sw: table_switch }, function (json) {
 			    if (json.table.rows) {
 			        $.each(json.table.rows, function (i, d) {
 			            d.c[0].v = new Date(d.c[0].v * 1000);
@@ -213,7 +213,6 @@
 			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' });
 			        $('#refreshBut').show();
 			        $('.load').remove();
-			        
 			    } else {
 			        alert('No data returned. Tool must have been running in the last couple of minutes for data to be returned.');
 			        togRun(0);

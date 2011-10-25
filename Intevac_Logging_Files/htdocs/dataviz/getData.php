@@ -12,6 +12,21 @@ $fid = (isset($_GET['fid']) ? $_GET['fid'] : '');
 $sd =  (isset($_GET['sd']) ? $_GET['sd'] : '');
 $ed =  (isset($_GET['ed']) ? $_GET['ed'] : '');
 
+
+//oldest mem timestamp (the table switch)
+if(isset($_GET['sw'])) //try to post to save time
+{
+  $sw = $_GET['sw'];
+}
+else
+{
+  $result = mysql_query("select UNIX_TIMESTAMP(Time) as tstamp FROM opc_data_mem  where 1 ORDER BY Time ASC LIMIT 1", $link);
+  $row = mysql_fetch_assoc($result);
+	$sw = $row['tstamp'];
+}
+
+
+
 if ($q == 's'){
 	$result = mysql_query('select distinct stationid from aqt_fields', $link);
 	$res = array();
@@ -33,10 +48,10 @@ if ($q == 'f'){
 
 if ($q == 'z')
 {
-  $result = mysql_query("select Time FROM opc_data_mem  where 1 ORDER BY Time ASC LIMIT 1", $link);
+  $result = mysql_query("SELECT UNIX_TIMESTAMP(Time) as tstamp FROM opc_data_mem where 1 ORDER BY Time ASC LIMIT 1", $link);
   while ($row = mysql_fetch_assoc($result)) 
   {
-	  echo $row['Time'];
+	  echo $row['tstamp'];
   }
 }
 
@@ -74,14 +89,27 @@ if ($q == 'd'){
 		$i++;
 	}
 	
-	$query .= ' from opc_data';
-	if ($sd && $ed){
+  
+	
+	if ($sd && $ed)
+  {
+    if( $sw < $sd ) //if the low time limit is greater than the old mem record, use mem table
+    {
+      $query .= ' from opc_data_mem';
+    }
+    else
+    {
+      $query .= ' from opc_data';
+    }
 		$query .= " where time > '$sd' and time < '$ed'";
 	}
-  else {
+  else 
+  {
+    $query .= ' from opc_data_mem';
     $query .= " where time > NOW() - INTERVAL 4 MINUTE";
   }
 	$query .= ' group by time order by time limit 300000';
+  
 	//echo $query;
 	$result = mysql_query($query, $link);
 	$i = 0;

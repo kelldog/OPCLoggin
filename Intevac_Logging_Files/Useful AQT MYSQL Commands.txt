@@ -7,3 +7,5 @@ SHOW CREATE TABLE tablename;
 SELEC * INTO OUTFILE "C:\yoyo.tsv" FROM tablename;
 
 "SELECT DISTINCT Client_Name FROM Portfolio ORDER BY Client_Name ASC";
+
+SELECT UNIX_TIMESTAMP(Time) as tstamp FROM opc_data_mem ORDER BY Time ASC LIMIT 1;
