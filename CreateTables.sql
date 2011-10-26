@@ -33,6 +33,12 @@ CREATE TABLE `opc_data_mem` (
   `ID` smallint(6) DEFAULT NULL,
   `Time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `Value` float DEFAULT NULL,
-  KEY `ID_index` (`ID`),
-  KEY `Time_index` (`Time`)
-) ENGINE=MEMORY DEFAULT CHARSET=latin1 
+  KEY `T_id` (`Time`) USING BTREE
+) ENGINE=MEMORY DEFAULT CHARSET=latin1
+
+CREATE TABLE `opc_data` (
+  `ID` smallint(6) DEFAULT NULL,
+  `Time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Value` float DEFAULT NULL,
+  KEY `T_id` (`Time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1

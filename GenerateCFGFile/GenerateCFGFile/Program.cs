@@ -107,6 +107,7 @@ namespace GenerateCFGFile
 
                 foreach (string l in UnitLines)
                 {
+                    Console.WriteLine("Applying units query: " + l);
                     MySqlCommand c = new MySqlCommand(l, conn);
                     c.ExecuteNonQuery();
                 }
@@ -119,6 +120,7 @@ namespace GenerateCFGFile
             {
                 conn.Close();
             }
+            Console.ReadLine();
             //*/
         }
     }

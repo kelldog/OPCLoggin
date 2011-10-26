@@ -12,16 +12,22 @@ namespace OPCLib
     public class FileDataFetcher
     {
         static MySqlConnection Conn = AQT_Database.GetMYSQLConnection();
-
+        static int MaxNoUpdateCycles = 7;
+        static int CyclesPerHDTableWrite = 5;
+        static int CyclesCounter = 0;
         //this depends on mysql installation
         static string inFilePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\temp.csv";
-
+        static string HDTablePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\HDTable_temp.csv";
+        static Mutex block = new Mutex();
+        
         public static void ParseFile(string file)
         {
               //WaitCallback cb = new WaitCallback(parseFile);
               //ThreadPool.QueueUserWorkItem(cb, file);
               //File
-              parseFile(file);
+                block.WaitOne();
+                parseFile(file);
+                block.ReleaseMutex();
         }
         private static void parseFile(string file)
         {
@@ -36,8 +42,10 @@ namespace OPCLib
             int ParseSuccesses = 0;
             int ParseFailures = 0;
             int TotalRecordsToInsert = 0;
+            int UnchangedFields = 0;
+            int RelalignedFields = 0;
             StreamWriter tempFile = new StreamWriter(inFilePath);
-
+            StreamWriter HDFile = new StreamWriter(HDTablePath , true);
             try
             {
                 
@@ -73,16 +81,31 @@ namespace OPCLib
                     Console.WriteLine(string.Format("{0}", zz));
                     while (i < line.Length)
                     {
+                        OPCField CurrentField = FieldInfos[i - 2];
+                        if (CurrentField == null)
+                        {
+                            Console.WriteLine("found null field: ");
+                            continue;
+                        }
                         try
                         {
                             float val;
-                            if (line[i].Contains("Fa"))//BOOLEAN FIELD --> Text file has false in it
+
+                            if (CurrentField.Type.Contains("BOOLEAN"))//BOOLEAN FIELD --> Text file has false in it
                             {
-                                val = 0;
-                            }
-                            else if (line[i].Contains("Tr"))//BOOLEAN FIELD --> Text File has true in it
-                            {
-                                val = 1;
+                                if(line[i].Contains("Fa"))
+                                {
+                                    val = 0;
+                                }
+                                else if (line[i].Contains("Tr"))
+                                {
+                                    val = 1;
+                                }
+                                else
+                                {
+                                    val = 0;
+                                    throw new Exception("Unparsible value");
+                                }
                             }
                             else
                             {
@@ -91,10 +114,23 @@ namespace OPCLib
 
                             ParseSuccesses++;
 
-                            if (FieldInfos[i - 2] != null)
+                            val /= CurrentField.Scale;
+                            if (val == CurrentField.LastValue && CurrentField.LastUpdate < MaxNoUpdateCycles)
                             {
-                                val /= FieldInfos[i - 2].Scale;
-                                AQT_Database.WriteToFile(tempFile, FieldInfos[i - 2], val, time);
+                                CurrentField.LastUpdate++;
+                                UnchangedFields++;
+                            }
+                            else 
+                            {
+                                if (CurrentField.LastUpdate >= MaxNoUpdateCycles)
+                                {
+                                    RelalignedFields++;
+                                }
+                                AQT_Database.WriteToFile(tempFile, CurrentField, val, time);
+                                AQT_Database.WriteToFile(HDFile, CurrentField, val, time);
+                                CurrentField.LastValue = val;
+                                CurrentField.LastUpdate = 0;
+                                CurrentField.LastUpdateTime = DateTime.Now;
                             }
                         }
                         catch (Exception ex)
@@ -105,6 +141,7 @@ namespace OPCLib
                     }
                 }
                 tempFile.Close();
+                HDFile.Close();
 
                 if (Conn.State != System.Data.ConnectionState.Open)
                 {
@@ -112,7 +149,19 @@ namespace OPCLib
                 }
                 try
                 {
-                    MySQLInsertSuccesses = AQT_Database.WriteInFileToDatabase(Conn, inFilePath);
+                    if (CyclesCounter > CyclesPerHDTableWrite)
+                    {
+                        CyclesCounter = 0;
+                        
+                        MySQLInsertSuccesses = AQT_Database.WriteInFileToDatabase(Conn, Path.GetFileName( HDTablePath ) );
+                        Console.WriteLine("Wrote To HD Table");
+                        File.Delete(HDTablePath);
+                        Console.WriteLine("deleted file: " + HDTablePath);
+                    }
+                    else
+                    {
+                        CyclesCounter++;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -120,14 +169,14 @@ namespace OPCLib
                 }
                 try
                 {
-                    MySQLInsertSuccesses =  AQT_Database.WriteInFileToDatabaseMemTable(Conn, inFilePath);
+                    MySQLInsertSuccesses =  AQT_Database.WriteInFileToDatabaseMemTable(Conn,  Path.GetFileName(inFilePath) );
                 }              
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
                 MySQLInsertFailures = TotalRecordsToInsert - MySQLInsertSuccesses;
-                Console.WriteLine(string.Format("Inserted {0} records out of {1} @ {2} on {3}", MySQLInsertSuccesses, TotalRecordsToInsert,DateTime.Now.ToLongTimeString() , DateTime.Now.ToLongDateString()));
+                Console.WriteLine(string.Format("Inserted {0} records out of {1} @ {2} on {3}. {4} unchanged fields. {5} Realigned fields", MySQLInsertSuccesses, TotalRecordsToInsert, DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString(), UnchangedFields, RelalignedFields));
             }
             catch (Exception ex)
             {
@@ -137,6 +186,7 @@ namespace OPCLib
             {
                 Conn.Close();
                 tempFile.Close();
+                HDFile.Close();
                 File.Delete(inFilePath);
             }
             

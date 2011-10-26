@@ -22,7 +22,9 @@
 		var intval = '';
 		var run = 0;
 		var rate = 4000; // refresh rate in ms
-		var table_switch;
+		var table_switch;//used to determine whether to use opc_data or opc_data_mem mysql table
+		var window_width;// the width of window on live update
+		var timeSpanWidth; //a user friend field to show the amount of time between the start and end date (in Minutes)
 		google.setOnLoadCallback(setupChart);
 		
 		function JSON2CSV(objArray)
@@ -130,7 +132,8 @@
 
 		function setupChart() {
 
-		    getFirstTimeStampFromMEM();
+		    getFirstTimeStampFromMEM(); //on load, figure out the oldest record in the opc_data_mem table
+
 			var data = new google.visualization.DataTable();
 			data.addColumn('datetime', 'Date');
 			data.addColumn('number', 'Data');
@@ -191,10 +194,67 @@
 		        //alert(data);
 		        table_switch = data;
 		    });
+		}
+
+		function getSelectedRadio(buttonGroup) 
+        {
+		    // returns the array number of the selected radio button or -1 if no button is selected
+		    if (buttonGroup[0]) { // if the button group is an array (one button is not an array)
+		        for (var i = 0; i < buttonGroup.length; i++) {
+		            if (buttonGroup[i].checked) {
+		                return i
+		            }
+		        }
+		    } else {
+		        if (buttonGroup.checked) { return 0; } // if the one button is checked, return zero
+		    }
+		    // if we get to this point, no radio button is selected
+		    return -1;
+		}
+
+		function getSelectedRadioValue(buttonGroup) 
+        {
+            // returns the value of the selected radio button or "" if no button is selected
+            var i = getSelectedRadio(buttonGroup);
+            if (i == -1) {
+                return "";
+            } else {
+                if (buttonGroup[i]) { // Make sure the button group is an array (not just one button)
+                    return buttonGroup[i].value;
+                } else { 
+                    return buttonGroup.value;
+                }
+            }
         }
+        
+        function UpdateTimeInterval() //this function calculates and displays the number of minutes of data the user has selected
+        {
+        
+            var sd = new Date(document.getElementById("startDate").value);
+            var sdEpoch = sd.getTime() / 1000.0;
 
+            var ed = new Date(document.getElementById("endDate").value);
+            var edEpoch = ed.getTime() / 1000.0;
+            var minutes = 0;
+            var mess = "";
+            if (!isNaN(edEpoch) && !isNaN(sdEpoch)) 
+            {
+                minutes = (edEpoch - sdEpoch) / 60.0;
+                document.getElementById("timeSpanMinutes").innerHTML = minutes +' Minutes of Data';// sprintf("%s %s", "aaa", "Minutes of Data");
+            }
+        }
+        function GetWindowWidthValue() {
+            
+            for (index = 0; index < document.ww.windowwidth.length; index++) {
+                if (document.ww.windowwidth[index].checked) {
+                    var radioValue = document.ww.windowwidth[index].value;
+                    return radioValue;
+                }
+            }
 
+        }
         function loadChart(sd, ed) {
+            
 			$('#refreshBut').hide();
 			$('#refresh').append('<div class="load refresh"><img src="images/ajax-loader.gif" /></div>');
 			var fids = [];
@@ -204,7 +264,11 @@
 			url = $.param({q:'d',fid:fids});
 			url = 'getData.php?'+url;
 			console.log(url);
-			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed ,sw: table_switch }, function (json) {
+			//alert('hi');
+			//window_width = 100;
+			window_width = GetWindowWidthValue();// getSelectedRadioValue(document.ww.windowwidth);
+			//alert( window_width );
+			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed ,sw: table_switch , ww: window_width}, function (json) {
 			    if (json.table.rows) {
 			        $.each(json.table.rows, function (i, d) {
 			            d.c[0].v = new Date(d.c[0].v * 1000);
@@ -256,8 +320,9 @@
 						<span id='dHeader'><h2>Choose Date:</h2></span>
 					</div>
 					<div class='ctrlRow'>
-						<input type='text' id='startDate' class='date' placeholder='Start Date' />
-						<input type='text' id='endDate' class='date' placeholder='End Date' />
+						<input type='text' id='startDate' class='date' placeholder='Start Date' onchange="UpdateTimeInterval()" />
+						<input type='text' id='endDate' class='date' placeholder='End Date' onchange="UpdateTimeInterval()" />
+                        <span id='timeSpanMinutes'>0 minutes</span>
 					</div>
 					<div class='ctrlRow'>
 						<span id='refresh'><input type='button' id='refreshBut' value='Reload Chart'/></span>
@@ -267,6 +332,18 @@
 					</div>
 					<div class='ctrlRow'>
 						<span id='refresh'><input type='button' id='ctrlBut' value='Start'/></span>
+					</div>
+                    <div class='timeSpan'>
+                    <div class='row'>
+						<span id='Span1'><h2>Live Update Window Width:</h2></span>
+                     </div>
+					<form name="ww">
+						<INPUT TYPE='RADIO' name="windowwidth" VALUE="60">1 Minute 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="120" checked>2 Minutes 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="300">5 Minutes 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="600">10 Minutes 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="3600">60 Minutes 
+                    </form name="ww">
 					</div>
 				</div>
 			</div>

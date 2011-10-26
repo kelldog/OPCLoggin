@@ -13,6 +13,7 @@ namespace OPCLib
 
         public static string connStr = "server=localhost;user=root;database=AQT;port=3306;password=aqt;";
         public static Dictionary<string, OPCField> CachedFields = new Dictionary<string, OPCField>();
+
         public static void Load_To_AQT_Database(OPCField F, float Value, DateTime time, MySqlConnection conn)
         {
             MySqlCommand c = new MySqlCommand("INSERT INTO opc_data (Value,Time,ID) VALUES (@val,@t,@id)", conn);
@@ -25,7 +26,7 @@ namespace OPCLib
 
         public static int WriteInFileToDatabase(MySqlConnection conn,string inFile)
         {
-            string command = string.Format("LOAD DATA INFILE \'temp.csv\' INTO TABLE opc_data \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';" , inFile );
+            string command = string.Format("LOAD DATA INFILE \'{0}\' INTO TABLE opc_data \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';" , inFile );
             MySqlCommand c = new MySqlCommand( command , conn);
             
             return c.ExecuteNonQuery();
@@ -33,14 +34,14 @@ namespace OPCLib
 
         public static int WriteInFileToDatabaseMemTable(MySqlConnection conn, string inFile)
         {
-            string command = string.Format("LOAD DATA INFILE \'temp.csv\' INTO TABLE opc_data_mem \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';", inFile);
+            string command = string.Format("LOAD DATA INFILE \'{0}\' INTO TABLE opc_data_mem \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';", inFile);
             MySqlCommand c = new MySqlCommand(command, conn);
             return c.ExecuteNonQuery();
         }
 
         public static void WriteToFile(StreamWriter fileout,OPCField F, float Value, DateTime Time)
         {
-	        string time = string.Format("{0}-{1}-{2} {3}:{4}:{5}.{6}", Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Second, Time.Millisecond);
+	        string time = string.Format("{0}-{1}-{2} {3}:{4}:{5}", Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Second );
             fileout.Write(string.Format("{0},{1},{2}\r\n", F.ID, time, Value));
         }
         public static MySqlConnection GetMYSQLConnection()
