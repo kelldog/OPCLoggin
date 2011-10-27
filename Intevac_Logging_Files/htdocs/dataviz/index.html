@@ -262,8 +262,11 @@
 				fids.push($(this).val());
 			});
 			url = $.param({q:'d',fid:fids});
-			url = 'getData.php?'+url;
-			console.log(url);
+			url = 'getData.php?' + url;
+			if (navigator.appName != 'Microsoft Internet Explorer') 
+            {
+			    console.log(url);
+			}
 			//alert('hi');
 			//window_width = 100;
 			window_width = GetWindowWidthValue();// getSelectedRadioValue(document.ww.windowwidth);
