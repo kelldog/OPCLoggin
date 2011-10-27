@@ -39,6 +39,13 @@ namespace OPCLib
             return c.ExecuteNonQuery();
         }
 
+
+        public static int FILL_MEMORY_TABLE_FROM(MySqlConnection Conn, DateTime StartTime, DateTime EndTime)
+        {
+            string command = string.Format("INSERT INTO opc_data_mem SELECT * FROM opc_data WHERE Time > \'{0}\' AND Time <= \'{1}\'", String.Format("{0:yyyy-MM-dd HH:mm:ss}", StartTime), String.Format("{0:yyyy-MM-dd HH:mm:ss}", EndTime));
+            MySqlCommand c = new MySqlCommand(command, Conn);
+            return c.ExecuteNonQuery();
+        }
         public static void WriteToFile(StreamWriter fileout,OPCField F, float Value, DateTime Time)
         {
 	        string time = string.Format("{0}-{1}-{2} {3}:{4}:{5}", Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Second );
