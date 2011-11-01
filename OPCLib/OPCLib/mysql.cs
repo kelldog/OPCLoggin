@@ -22,6 +22,7 @@ namespace OPCLib
             c.Parameters.Add(FillP("@t", time, MySqlDbType.DateTime));
             //c.Parameters.Add(FillParam("@st", d.fieldinfo.StationInfo.StationID, conn, System.Data.SqlDbType.TinyInt));
             c.ExecuteNonQuery();
+            c.Dispose();
         }
 
         public static int WriteInFileToDatabase(MySqlConnection conn,string inFile)
@@ -29,14 +30,18 @@ namespace OPCLib
             string command = string.Format("LOAD DATA INFILE \'{0}\' INTO TABLE opc_data \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';" , inFile );
             MySqlCommand c = new MySqlCommand( command , conn);
             
-            return c.ExecuteNonQuery();
+            int rows_affected = c.ExecuteNonQuery();
+            c.Dispose();
+            return rows_affected;
         }
 
         public static int WriteInFileToDatabaseMemTable(MySqlConnection conn, string inFile)
         {
             string command = string.Format("LOAD DATA INFILE \'{0}\' INTO TABLE opc_data_mem \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';", inFile);
             MySqlCommand c = new MySqlCommand(command, conn);
-            return c.ExecuteNonQuery();
+            int rows_affected =  c.ExecuteNonQuery();
+            c.Dispose();
+            return rows_affected;
         }
 
 
@@ -44,7 +49,9 @@ namespace OPCLib
         {
             string command = string.Format("INSERT INTO opc_data_mem SELECT * FROM opc_data WHERE Time > \'{0}\' AND Time <= \'{1}\'", String.Format("{0:yyyy-MM-dd HH:mm:ss}", StartTime), String.Format("{0:yyyy-MM-dd HH:mm:ss}", EndTime));
             MySqlCommand c = new MySqlCommand(command, Conn);
-            return c.ExecuteNonQuery();
+            int rows_affected = c.ExecuteNonQuery();
+            c.Dispose();
+            return rows_affected;
         }
         public static void WriteToFile(StreamWriter fileout,OPCField F, float Value, DateTime Time)
         {
@@ -98,6 +105,8 @@ namespace OPCLib
             finally
             {
                 reader.Close();
+                reader.Dispose();
+                c.Dispose();
             }
 
             CachedFields.Add(Field.Name, Field);

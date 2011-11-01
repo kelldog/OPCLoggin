@@ -1,3 +1,6 @@
+SELECT Name,ID FROM fields WHERE Name = "MODULE0.SYMBOLS.AUTOMATIC_MOTION_START";
+
+
 //1.  DC Stations/Heater (ChamberID = 248), DC Scan / Heater (ChamberID = 232)
 
 SELECT Name,ID FROM fields WHERE ChamberTypeID IN (248,232) AND Name LIKE "%_BIAS_VOLTAGE_READBACK";
@@ -12,6 +15,11 @@ SELECT Name,ID FROM fields WHERE ChamberTypeID IN (248,232) AND Name LIKE "%_MFC
 SELECT Name,ID FROM fields WHERE ChamberTypeID IN (248,232) AND Name LIKE "%_MFC_4_FLOW_READBACK";
 SELECT Name,ID FROM fields WHERE ChamberTypeID IN (248,232) AND Name LIKE "%_Current_recipe_step_number";
 
+SELECT Name,ID FROM fields WHERE ChamberTypeID IN (248,232) AND Name LIKE "%_HVPS_SIDE_A_POWER_STPT";
+SELECT Name,ID FROM fields WHERE ChamberTypeID IN (248,232) AND Name LIKE "%_PowerB_On";
+
+
+
 //2.	DC Stations/Blank (ChamberID = 246), DC Scan / Blank (ChamberID =234)
 
 SELECT Name,ID FROM fields WHERE ChamberTypeID IN (246, 234) AND Name LIKE "%_BIAS_VOLTAGE_READBACK";
@@ -23,6 +31,9 @@ SELECT Name,ID FROM fields WHERE ChamberTypeID IN (246, 234) AND Name LIKE "%_MF
 SELECT Name,ID FROM fields WHERE ChamberTypeID IN (246, 234) AND Name LIKE "%_MFC_3_FLOW_READBACK";
 SELECT Name,ID FROM fields WHERE ChamberTypeID IN (246, 234) AND Name LIKE "%_MFC_4_FLOW_READBACK";
 SELECT Name,ID FROM fields WHERE ChamberTypeID IN (246, 234) AND Name LIKE "%_Current_recipe_step_number";
+
+SELECT Name,ID FROM fields WHERE ChamberTypeID IN (246,234) AND Name LIKE "%_HVPS_SIDE_A_POWER_STPT";
+SELECT Name,ID FROM fields WHERE ChamberTypeID IN (246,234) AND Name LIKE "%_PowerB_On";
 
 //3.	RF Stations/Heater (ChamberID=244(3.5kW), 258(5kW)), RF Scan / Heater (ChamberID =224(3.5kW), 228(5kW)) 
 

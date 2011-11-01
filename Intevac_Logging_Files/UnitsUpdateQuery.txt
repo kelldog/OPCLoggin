@@ -5,3 +5,5 @@ UPDATE aqt_fields SET Units="IN/OUT" WHERE Name like('%_CLOSED');
 UPDATE aqt_fields SET Units="kWatts" WHERE Name like('%_POWER_B_READBACK');
 UPDATE aqt_fields SET Units="sccm" WHERE Name like('%_FLOW_READBACK');
 UPDATE aqt_fields SET Units='kWatts' WHERE Name like('%HVPS_POWER%');
+UPDATE aqt_fields SET Units='kWatts' WHERE Name like('%POWER_STPT%');
+UPDATE aqt_fields SET Units='On/Off' WHERE Name like('%PowerB_On%');

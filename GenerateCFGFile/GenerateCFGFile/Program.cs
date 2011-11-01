@@ -69,6 +69,7 @@ namespace GenerateCFGFile
 
                     }
                     reader.Close();
+                    reader.Dispose();
 
                     foreach (int id in IDs)
                     {
@@ -81,6 +82,10 @@ namespace GenerateCFGFile
                         catch (Exception ex)
                         {
                             Console.WriteLine(ex.Message);
+                        }
+                        finally
+                        {
+                            c2.Dispose();
                         }
                     }
                     foreach (string s in Names)

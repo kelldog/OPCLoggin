@@ -19,6 +19,19 @@ namespace OPCLib
         static string inFilePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\temp.csv";
         static string HDTablePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\HDTable_temp.csv";
         static Mutex block = new Mutex();
+        static string[] FileLines;
+        static string[] HeaderNames;
+        static List<OPCField> FieldInfos;
+        static List<string> OPCFieldNames;
+        static string[] line;
+        static int MySQLInsertSuccesses = 0;
+        static  int MySQLInsertFailures = 0;
+        static int ParseSuccesses = 0;
+        static int ParseFailures = 0;
+        static int TotalRecordsToInsert = 0;
+        static int UnchangedFields = 0;
+        static int RelalignedFields = 0;
+
         
         public static void ParseFile(string file)
         {
@@ -27,37 +40,40 @@ namespace OPCLib
               //File
                 block.WaitOne();
                 parseFile(file);
+                FieldInfos.Clear();
+                OPCFieldNames.Clear();
                 block.ReleaseMutex();
+
         }
         private static void parseFile(string file)
         {
 
-            string[] FileLines = File.ReadAllLines(file);
+            FileLines = File.ReadAllLines(file);
             File.Delete(file);
             Console.WriteLine("deleted file: " + file);
-            string[] HeaderNames = FileLines[0].Split(',');
+            HeaderNames = FileLines[0].Split(',');
         
-            int MySQLInsertSuccesses = 0;
-            int MySQLInsertFailures = 0;
-            int ParseSuccesses = 0;
-            int ParseFailures = 0;
-            int TotalRecordsToInsert = 0;
-            int UnchangedFields = 0;
-            int RelalignedFields = 0;
+             MySQLInsertSuccesses = 0;
+             MySQLInsertFailures = 0;
+             ParseSuccesses = 0;
+             ParseFailures = 0;
+             TotalRecordsToInsert = 0;
+             UnchangedFields = 0;
+             RelalignedFields = 0;
             StreamWriter tempFile = new StreamWriter(inFilePath);
             StreamWriter HDFile = new StreamWriter(HDTablePath , true);
             try
             {
                 
-                string[] line = HeaderNames.ToArray();
+                line = HeaderNames.ToArray();
                 TotalRecordsToInsert = line.Length - 2;//2 fields for date and time
-                List<string> OPCFieldNames = new List<string>();
+                OPCFieldNames = new List<string>();
 
                 for (int i = 2; i < line.Length; i++)
                 {
                     OPCFieldNames.Add( line[i]);
                 }
-                List<OPCField> FieldInfos = new List<OPCField>();
+                FieldInfos = new List<OPCField>();
 
                 for (int i = 0; i < OPCFieldNames.Count; i++)
                 {
@@ -176,6 +192,8 @@ namespace OPCLib
                     Console.WriteLine(ex.Message);
                 }
                 MySQLInsertFailures = TotalRecordsToInsert - MySQLInsertSuccesses;
+
+                
                 Console.WriteLine(string.Format("Inserted {0} records out of {1} @ {2} on {3}. {4} unchanged fields. {5} Realigned fields", MySQLInsertSuccesses, TotalRecordsToInsert, DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString(), UnchangedFields, RelalignedFields));
             }
             catch (Exception ex)
@@ -185,9 +203,13 @@ namespace OPCLib
             finally
             {
                 Conn.Close();
+
                 tempFile.Close();
+                tempFile.Dispose();
                 HDFile.Close();
+                HDFile.Dispose();
                 File.Delete(inFilePath);
+                
             }
             
         }
