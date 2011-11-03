@@ -109,7 +109,14 @@ namespace OPCLib
                 c.Dispose();
             }
 
-            CachedFields.Add(Field.Name, Field);
+            try
+            {
+                CachedFields.Add(Field.Name, Field);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("UH OH!!!!  Duplicate key  "+Field.Name);
+            }
             return Field;
         }
 

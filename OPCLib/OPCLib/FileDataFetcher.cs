@@ -52,14 +52,16 @@ namespace OPCLib
             File.Delete(file);
             Console.WriteLine("deleted file: " + file);
             HeaderNames = FileLines[0].Split(',');
+
+            FieldInfos = new List<OPCField>();
         
-             MySQLInsertSuccesses = 0;
-             MySQLInsertFailures = 0;
-             ParseSuccesses = 0;
-             ParseFailures = 0;
-             TotalRecordsToInsert = 0;
-             UnchangedFields = 0;
-             RelalignedFields = 0;
+            MySQLInsertSuccesses = 0;
+            MySQLInsertFailures = 0;
+            ParseSuccesses = 0;
+            ParseFailures = 0;
+            TotalRecordsToInsert = 0;
+            UnchangedFields = 0;
+            RelalignedFields = 0;
             StreamWriter tempFile = new StreamWriter(inFilePath);
             StreamWriter HDFile = new StreamWriter(HDTablePath , true);
             try
@@ -73,7 +75,7 @@ namespace OPCLib
                 {
                     OPCFieldNames.Add( line[i]);
                 }
-                FieldInfos = new List<OPCField>();
+                
 
                 for (int i = 0; i < OPCFieldNames.Count; i++)
                 {

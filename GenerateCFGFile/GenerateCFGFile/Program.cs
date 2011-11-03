@@ -10,6 +10,61 @@ namespace GenerateCFGFile
 {
     class Program
     {
+        public static string header = @"[Servers]
+Server Name=APPLICOM.OPCServer.1 (Intevac-28404)
+Server ProgID=APPLICOM.OPCServer.1
+Server ReconnectAuto=0
+Server ReconnectSecs=30
+Server Type=0
+Server Machine=Intevac-28404
+Group Name=1_sec
+Group Id=2
+Group UpdateRate=1000
+Group TimeBias=0
+Group DeadBand=0
+Group IsActive=True
+Group Log File Name Mode=0
+Group Log File Name=C:\OPCDataLogger\OPCDataLogger\Log Data\aqt.csv
+Group Log File Name Tag=
+Group Log File Creation=0
+Group Log File Time Enabled1=True
+Group Log File Time1=12:00:00 AM
+Group Log File Time Enabled2=False
+Group Log File Time2=12:00:00 AM
+Group Log File Time Enabled3=False
+Group Log File Time3=12:00:00 AM
+Group Log File Time Enabled4=False
+Group Log File Time4=12:00:00 AM
+Group Log File Time Enabled5=False
+Group Log File Time5=12:00:00 AM
+Group Log File Time Enabled6=False
+Group Log File Time6=12:00:00 AM
+Group Log File Options=1
+Group Log File Counter=1
+Group Log DB Table Name=
+Group Log DB Data=0
+Group Log Remote Control=1
+Group Log Remote Start Tag=MODULE0.SYMBOLS.AUTOMATIC_MOTION_START
+Group Log Remote Pause Tag=
+Group Log Remote Stop Tag=MODULE0.SYMBOLS.AUTOMATIC_MOTION_START
+Group Log Remote Start Tag Invert=False
+Group Log Remote Pause Tag Invert=False
+Group Log Remote Stop Tag Invert=True
+Group Log Remote Cycle Tag=
+Group Log Based On=Time
+Group Log Data Rate=1000
+Group Log Trigger=
+Group Log Mark=1
+Group Log Header=True
+Group Log MilliSecs=False
+Group Log Item Only=False
+Group Log Data Format=0
+Group Log State=0
+Group Heart Beat Mode=0
+Group Heart Beat Tag=
+Group Heart Beat Interval=1000
+Group Chart Data Rate=1000
+Group Web Live Data Mode=0";
         public static string connStr = "server=localhost;user=root;database=aqt;port=3306;password=aqt;";
 
         static void Main(string[] args)
@@ -43,7 +98,7 @@ namespace GenerateCFGFile
             StreamWriter outFile = new StreamWriter(outFilePath);
             MySqlConnection conn = new MySqlConnection(Program.connStr);
 
-            
+            List<string> loadedfields = new List<string>();
 
             try
             {
@@ -70,14 +125,27 @@ namespace GenerateCFGFile
                     }
                     reader.Close();
                     reader.Dispose();
-
-                    foreach (int id in IDs)
+                    if (IDs.Count == 0)
                     {
-                        MySqlCommand c2 = new MySqlCommand(string.Format("INSERT INTO aqt_fields (ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type) SELECT ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type FROM fields WHERE ID = {0}", id), conn);
+                        continue;
+                    }
+
+                    for (int k = 0; k < IDs.Count; k++ )
+                    {
+
+                        if( Names[k].ToUpper() != Names[k])//watch out for lower case duplicates on the POWER B signal
+                        {
+                            int uu= 0;
+                            Console.WriteLine("found lower case duplicate: " + Names[k]);
+                            continue;
+                        }
+                        MySqlCommand c2 = new MySqlCommand(string.Format("INSERT INTO aqt_fields (ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type) SELECT ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type FROM fields WHERE ID = {0}", IDs[k]), conn);
+                        
                         try
                         {
                             c2.ExecuteNonQuery();
-                            Console.WriteLine(string.Format("ID cloned {0}", id));
+                            loadedfields.Add(Names[k]);
+                            Console.WriteLine(string.Format("ID cloned {0}", IDs[k]));
                         }
                         catch (Exception ex)
                         {
@@ -88,11 +156,16 @@ namespace GenerateCFGFile
                             c2.Dispose();
                         }
                     }
-                    foreach (string s in Names)
-                    {
-                        Console.WriteLine("Processing"+s);
-                        outFile.WriteLine(string.Format("Item Name={0}\r\nItem Format Data As=0\r\nItem Format Data As On Label=\r\nItem Format Data As Off Label=\r\nItem Format Data As Num Dec Places=2\r\nItem={0}", s));
-                    }
+
+                }
+
+                
+                outFile.WriteLine(header);
+                foreach (string s in loadedfields)
+                {
+                    Console.WriteLine("Processing" + s);
+                    
+                    outFile.WriteLine(string.Format("Item Name={0}\r\nItem Format Data As=0\r\nItem Format Data As On Label=\r\nItem Format Data As Off Label=\r\nItem Format Data As Num Dec Places=2\r\nItem={0}", s));
                 }
             }
             catch (Exception ex)
