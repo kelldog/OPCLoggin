@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace OPCLib
 {
-    public class FileDataFetcher
+    public static class FileDataFetcher
     {
         static MySqlConnection Conn = AQT_Database.GetMYSQLConnection();
         static int MaxNoUpdateCycles = 7;

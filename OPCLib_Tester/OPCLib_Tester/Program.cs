@@ -19,7 +19,7 @@ namespace OPCLib_Tester
         public static bool Running = true;
         public static FileSystemWatcher watcher;
         public static string DirToWatch = @"C:\OPCDataLogger\OPCDataLogger\Log Data";
-
+      //  public static FileDataFetcher aqt_opc;
         static bool firstPass = true;
 
         static void Main(string[] args)
@@ -53,6 +53,7 @@ namespace OPCLib_Tester
             {
                 Console.WriteLine("Log file Change event detected..." + e.FullPath);
                 watcher.EnableRaisingEvents = false;
+               // aqt_opc.
                 FileDataFetcher.ParseFile( e.FullPath );
                 watcher.EnableRaisingEvents = true;
             }

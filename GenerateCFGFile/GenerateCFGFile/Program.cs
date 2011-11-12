@@ -70,6 +70,8 @@ Group Web Live Data Mode=0";
         static void Main(string[] args)
         {
 
+            bool add_fields_aqt_fields_table = false;
+
             string outFilePath = "";
             string AQT_Fields_To_Graph_QueryPath = "";
             string UnitQueryFile = "";
@@ -140,21 +142,28 @@ Group Web Live Data Mode=0";
                             continue;
                         }
                         MySqlCommand c2 = new MySqlCommand(string.Format("INSERT INTO aqt_fields (ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type) SELECT ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type FROM fields WHERE ID = {0}", IDs[k]), conn);
-                        
-                        try
+                        if (add_fields_aqt_fields_table)
                         {
-                            c2.ExecuteNonQuery();
-                            loadedfields.Add(Names[k]);
-                            Console.WriteLine(string.Format("ID cloned {0}", IDs[k]));
+                            try
+                            {
+
+                                
+                                c2.ExecuteNonQuery();
+                                Console.WriteLine(string.Format("ID cloned {0}", IDs[k]));
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                            finally
+                            {
+                                if (c2 != null)
+                                {
+                                    c2.Dispose();
+                                }
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                        finally
-                        {
-                            c2.Dispose();
-                        }
+                        loadedfields.Add(Names[k]);
                     }
 
                 }
@@ -167,6 +176,8 @@ Group Web Live Data Mode=0";
                     
                     outFile.WriteLine(string.Format("Item Name={0}\r\nItem Format Data As=0\r\nItem Format Data As On Label=\r\nItem Format Data As Off Label=\r\nItem Format Data As Num Dec Places=2\r\nItem={0}", s));
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -177,7 +188,10 @@ Group Web Live Data Mode=0";
                 outFile.Close();
                 conn.Close();
             }
-
+            if (!add_fields_aqt_fields_table)
+            {
+                return;
+            }
            // /*
             try
             {

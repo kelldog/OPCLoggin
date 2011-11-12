@@ -8,7 +8,7 @@ using MySql.Data.MySqlClient;
 
 namespace OPCLib
 {
-    public class AQT_Database
+    public static class AQT_Database
     {
 
         public static string connStr = "server=localhost;user=root;database=AQT;port=3306;password=aqt;";
@@ -62,10 +62,6 @@ namespace OPCLib
         {
             MySqlConnection conn = new MySqlConnection(connStr);
             return conn;
-        }
-        public void InsertnewOPCField(OPCField F, MySqlConnection conn)
-        {
-            throw new Exception("field not in table lookup");
         }
 
         public static OPCField GetFieldInfo(string Name, MySqlConnection conn)
