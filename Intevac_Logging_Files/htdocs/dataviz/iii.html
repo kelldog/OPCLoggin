@@ -1,0 +1,325 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<title>AQT Visualizer</title>
+<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/jquery-ui-1.8.5.custom.css">
+
+<script src="js/libs/modernizr-1.7.min.js"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+google.load('visualization', '1', {'packages':['annotatedtimeline','motionchart']});
+var chart = '';
+var data = '';
+var staIDs = new Array();
+var url = '';
+var intval = '';
+var run = 0;
+var rate = 4000; // refresh rate in ms
+var date = new Date();
+var ed = parseInt(date.getTime() / 1000);//1321388555;//
+var sd = ed - 360;
+var ids_ret = '';// = new Array();
+var last_time ;
+var ids = "9199,8768";
+var nodata = 0;
+
+var timeSpanWidth; //a user friend field to show the amount of time between the start and end date (in Minutes)
+google.setOnLoadCallback(loadChart);
+getCSV();
+
+
+function getCSV()
+{
+
+/*
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    var str = '';
+ 
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        for (var index in array[i]) {
+            if(line != '') line += ','
+            line += array[i][index];
+        }
+        str += line + '\r\n';
+    }
+ 
+    if (navigator.appName != 'Microsoft Internet Explorer') {
+        window.open('data:text/csv;charset=utf-8,' + escape(str));
+    }
+    else {
+        var popup = window.open('','csv','');
+        popup.document.body.innerHTML = '<pre>' + str + '</pre>';
+    }
+*/
+
+	var str = 'hey kellen'+'\r\n';
+	var w = window.open('','csvWindow'); // popup, may be blocked though
+	// the following line does not actually do anything interesting with the 
+	// parameter given in current browsers, but really should have. 
+	// Maybe in some browser it will. It does not hurt anyway to give the mime type
+	w.document.open("text/csv");
+	w.document.write(str); // the csv string from for example a jquery plugin
+	w.document.write(str);
+	w.document.write(str);
+	w.document.close();
+
+
+
+}
+
+
+
+function addRow(s,f)
+{
+	$('.add').attr('src','images/delete.png').attr('class','del');;
+	var row = "<div class='fRow'><div class='rowElemID'><select class='sID'>";
+	$.each(staIDs, function(i,d){
+		row += '<option>'+d+'</option>';
+	});
+	row +="</select></div><div class='rowElemF'><select class='fName'></select></div><img class='add' style='cursor: pointer' src='images/add.png' /></div>";
+}
+		
+
+	function loadChart() 
+	{
+//	$('#refreshBut').hide();
+//	$('#refresh').append('<div class="load refresh"><img src="images/ajax-loader.gif" /></div>');
+
+	var fids = [];
+	$('.fName').each(function(){
+		fids.push($(this).val());
+	});
+
+
+	
+	
+		chart = new google.visualization.AnnotatedTimeLine( $('#chart_div')[0]);//document.getElementById('chart_div') );
+		
+		google.visualization.events.addListener(chart, 'ready', graphed);
+		url = 'getFieldInfos.php?ids='+ids;	
+		$.getJSON(url, SetupChart );
+	}
+	function graphed()
+	{
+		sd = last_time ;
+		setTimeout("requestData()", 1000);
+	}
+	
+	function requestData()
+	{
+		ed = "";//parseInt( (new Date()).getTime() / 1000) + 1;	
+		//url = 'getOPCData.php?sd='+sd+'&ed='+ed+'&ids='+ids;	
+		url = 'getOPCData.php?sd='+sd+'&ids='+ids;	
+		$.getJSON(url, plotData );
+	}
+
+	function SetupChart(json)
+	{
+		nodata = 0;
+		ids_ret = new Array();
+		chart.colors = new Array();
+		chart.colors.push('green');
+		chart.colors.push('blue');
+		chart.colors.push('red');
+		data = new google.visualization.DataTable( );
+		data.addColumn('datetime', 'Date');
+
+		for(i = 0 ; i < json.fieldinfo.length; i++)
+		{
+			data.addColumn('number', json.fieldinfo[i].Name,json.fieldinfo[i].id );
+			ids_ret.push( json.fieldinfo[i].id );
+		}
+		requestData();
+	}
+
+
+	function plotData(json)
+	{
+
+		var startTime = parseInt(json.start_time);	
+		last_time = parseInt(json.end_time);
+		var maxRows = 4000;
+		var Rows = data.getNumberOfRows();
+		if(json.time.length == 0 && Rows > 0  )
+		{
+			nodata++;
+			if(nodata < 10 )
+			{
+				var nd_newrow = new Array();	
+				var d = new Date( );//Date.now();
+				last_time = parseInt( d.getTime() / 1000 );
+				nd_newrow.push(d);
+				for(k = 0; k < ids_ret.length; k++)
+				{	
+
+				
+					nd_newrow.push( data.getValue(Rows - 1, k+1) );
+				
+					//alert(lastval);
+				}
+				//alert(nd_newrow);
+			
+				data.addRow( nd_newrow );	
+				Rows++;
+			}
+				
+		}		
+		//Rows = data.getNumberOfRows();
+		var offset = Rows;
+		//var allnewdata = new Array();
+		for(i = 0 ; i < json.time.length; i++)
+		{
+			nodata = 0;
+			var newrow = new Array();
+			var date = new Date( parseInt((json.time[i]+startTime)*1000  ));
+			if( i == 0 )
+			{
+				chart.zoomEndTime = date;
+			}
+			//newrow.push(  );
+			//Rows++;
+			data.addRows(1);
+			
+			data.setCell(  Rows, 0 , date );
+			
+			var lastval = Number.NaN;
+			for(k = 0; k < ids_ret.length; k++)
+			{
+				var val = parseFloat( json[ids_ret[k]][i] );
+				if( isNaN( val ) && (offset + i) > 0 )
+				{
+					//alert("shouldnt get here");
+					//alert(Rows + i - 1 );
+					val = data.getValue( offset + i - 1 , k + 1 );//json[ids_ret[k]][i -1 ] );
+					//alert(val);
+					if( isNaN( val) )
+					{
+						//alert(val);
+					}
+				}
+				//alert(k+1);
+				data.setCell(Rows,k+1,val);
+				
+				//alert(val);
+				//newrow.push( val  );
+			}
+			//alert(newrow);
+			//data.addRows( newrow);
+			Rows++;
+		}
+		//Rows = data.getNumberOfRows();
+		var overage = Rows - maxRows;
+		if( overage > 0 )
+		{
+			//data.removeRows(0,overage);
+		}
+		if(Rows > 0)
+		{
+			//alert(data.getValue(0,0));
+			//chart.zoomEndTime = new Date(data.getValue(0,0));
+			
+		}
+		if(nodata > 10)
+		{
+			//alert('turn off graphs');
+		}
+
+		//chart =  new google.visualization.AnnotatedTimeLine( $('#chart_div')[0]);
+		chart.draw(data,{'displayAnnotation':false,'allowRedraw': true,'fill':25,});
+
+		//setTimeout("graphed()", 2000);
+		//chart.draw(data,{allowRedraw: true,fill:25});
+		//chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'window' , 'displayAnnotation' : 'false' , 'allowRedraw' : 'true' ,'thickness':'3','fill':'25'});
+	}
+	
+
+</script>
+</head>
+<body>
+	<div id="container">
+		<div style='height: 75px;'>
+			<img class="header" src='images/logo_aqt.gif'></img>
+			<div class="header">Data Visualizer</div>
+		</div>
+
+		<div id="main" role="main">
+			<div id='chart_div' style='width: 1000px; height: 440px;'></div>
+			<div id='botDiv'>
+				<div id='selectDiv'>
+					<div class='row'>
+						<span id='dHeader'><h2>Choose Saved State:</h2></span>
+						<div id='saveDiv'><select class='saves' style='margin-left: 20px;'></select></div>
+						<input id='sName' type='text' size='20' value='' />
+						<span id='save'><input id='saveBut' type='button' value='Save State' /></span>
+						<span id='delete'><input id='delBut' type='button' value='Delete Current State' /></span>
+						<div id='wStatus'></div>
+					</div>
+					<div class='row'>
+						<span id='dHeader'><h2>Choose Data:</h2></span>
+					</div>
+					<div class='row'>
+						<div class='rowElemID'>Station ID</div>
+						<div class='rowElemF'>Data Field</div>
+					</div>
+				</div>
+				<div id='ctrlDiv'>
+					<div class='row'>
+						<span id='dHeader'><h2>Choose Date:</h2></span>
+					</div>
+					<div class='ctrlRow'>
+						<input type='text' id='startDate' class='date' placeholder='Start Date' onchange="UpdateTimeInterval()" />
+						<input type='text' id='endDate' class='date' placeholder='End Date' onchange="UpdateTimeInterval()" />
+                        <span id='timeSpanMinutes'>0 minutes</span>
+					</div>
+					<div class='ctrlRow'>
+						<span id='refresh'><input type='button' id='refreshBut' value='Reload Chart'/></span>
+					</div>
+					<div class='row'>
+						<span id='dHeader'><h2>Run Live:</h2></span>
+					</div>
+					<div class='ctrlRow'>
+						<span id='refresh'><input type='button' id='ctrlBut' value='Start'/></span>
+					</div>
+                    <div class='timeSpan'>
+                    <div class='row'>
+						<span id='Span1'><h2>Live Update Window Width:</h2></span>
+                     </div>
+					<form name="ww">
+						<INPUT TYPE='RADIO' name="windowwidth" VALUE="60">1 Minute 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="120" checked>2 Minutes 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="300">5 Minutes 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="600">10 Minutes 
+                        <INPUT TYPE='RADIO' name="windowwidth" VALUE="3600">60 Minutes 
+                    </form name="ww">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+	<script>!window.jQuery && document.write(unescape('%3Cscript src="js/libs/jquery-1.5.1.min.js"%3E%3C/script%3E'))</script>
+	<script src="js/libs/jquery-ui-1.8.5.custom.min.js"></script>
+	<script src="js/libs/jquery-ui-timepicker-addon-0.6.js"></script>
+	
+	<!--[if lt IE 7 ]>
+	<script src="js/libs/dd_belatedpng.js"></script>
+	<script> DD_belatedPNG.fix('img, .png_bg');</script>
+	<![endif]-->
+	<script>
+		var _gaq=[['_setAccount','UA-1602064-4'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
+		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+		g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+		s.parentNode.insertBefore(g,s)}(document,'script'));
+	</script>
+</body>
+</html>

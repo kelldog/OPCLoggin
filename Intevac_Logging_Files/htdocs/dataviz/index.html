@@ -17,6 +17,7 @@
 	<script type="text/javascript">
 		google.load('visualization', '1', {'packages':['annotatedtimeline','motionchart']});
 		var chart = '';
+		var data;// = '';//new google.visualization.DataTable(
 		var staIDs = new Array();
 		var url = '';
 		var intval = '';
@@ -161,6 +162,8 @@
 				dateFormat: 'yy-mm-dd'
 			});
 			$('#ctrlBut').click(togRun);
+
+			$('#csvBut').click(createcsv);
 			getSaves();
 		}
 		
@@ -253,6 +256,62 @@
             }
 
         }
+
+	function createcsv()
+	{
+		var w = window.open('','csvWindow'); // popup, may be blocked though
+
+	
+		w.document.open("text/csv");
+		var i  = 0;
+		if( data == null)
+		{
+		 	alert("no data to output");
+			return;
+		}
+		var lastVals = new Array( data.getNumberOfColumns() );
+		
+		for(var C = 0 ; C < data.getNumberOfColumns(); C++ )
+		{
+			w.document.write( data.getColumnLabel(C) +"," );
+				
+		}
+
+		w.document.write("<br>");
+
+		while( i < data.getNumberOfRows() )
+		{
+			var z = 1;
+			var d = new Date( data.getValue( i , 0 ) );
+			var str = d.toLocaleTimeString() +",";
+			w.document.write(str);
+			while( z < data.getNumberOfColumns() )
+			{
+				var val = data.getValue( i , z );
+				if( val !='')
+				{
+					lastVals[z - 1] = val;
+				}
+				else
+				{
+					if(lastVals[z - 1] != null)
+					{
+						val = lastVals[z - 1];
+					}
+					//alert("nuller");
+
+				}
+				str = val+",";
+				w.document.write(str); // the csv string from for example a jquery plugin
+				z++;
+			}
+
+			w.document.write("<br>");
+			i++;
+		}
+		w.document.close();
+	}
+
         function loadChart(sd, ed) {
             
 			$('#refreshBut').hide();
@@ -276,7 +335,7 @@
 			        $.each(json.table.rows, function (i, d) {
 			            d.c[0].v = new Date(d.c[0].v * 1000);
 			        });
-			        var data = new google.visualization.DataTable(json.table);
+			        data = new google.visualization.DataTable(json.table);
 			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' });
 			        $('#refreshBut').show();
 			        $('.load').remove();
@@ -308,6 +367,8 @@
 						<input id='sName' type='text' size='20' value='' />
 						<span id='save'><input id='saveBut' type='button' value='Save State' /></span>
 						<span id='delete'><input id='delBut' type='button' value='Delete Current State' /></span>
+						  
+						<span id='csvSave'><input id='csvBut' type='button' value='save data to csv file'/></span>
 						<div id='wStatus'></div>
 					</div>
 					<div class='row'>

@@ -11,7 +11,7 @@ $id = (isset($_GET['id']) ? $_GET['id'] : '');
 $fid = (isset($_GET['fid']) ? $_GET['fid'] : '');
 $sd =  (isset($_GET['sd']) ? $_GET['sd'] : '');
 $ed =  (isset($_GET['ed']) ? $_GET['ed'] : '');
-
+$ww = (isset($_GET['ww']) ? $_GET['ww'] : '');
 
 //oldest mem timestamp (the table switch)
 if(isset($_GET['sw'])) //try to post to save time
@@ -106,7 +106,7 @@ if ($q == 'd'){
   else 
   {
     $query .= ' from opc_data_mem';
-    $query .= " where time > NOW() - INTERVAL 4 MINUTE";
+    $query .= " where time > NOW() - INTERVAL $ww SECOND";
   }
 	$query .= ' group by time order by time limit 300000';
   
