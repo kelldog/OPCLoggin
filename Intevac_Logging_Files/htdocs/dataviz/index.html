@@ -23,7 +23,7 @@
 		var intval = '';
 		var run = 0;
 		var rate = 4000; // refresh rate in ms
-		var table_switch;//used to determine whether to use opc_data or opc_data_mem mysql table
+
 		var window_width;// the width of window on live update
 		var timeSpanWidth; //a user friend field to show the amount of time between the start and end date (in Minutes)
 		google.setOnLoadCallback(setupChart);
@@ -131,10 +131,8 @@
 			}
 		}
 
-		function setupChart() {
-
-		    getFirstTimeStampFromMEM(); //on load, figure out the oldest record in the opc_data_mem table
-
+		function setupChart() 
+		{
 			var data = new google.visualization.DataTable();
 			data.addColumn('datetime', 'Date');
 			data.addColumn('number', 'Data');
@@ -184,19 +182,6 @@
 					});
 				});
 	
-		}
-
-		function getFirstTimeStampFromMEM() 
-        {
-
-		    url = $.param({ q: 'z' });
-		    url = 'getData.php?' + url;
-
-		    $.post(url, function (data) {
-		        // alert("Data Loaded: " + data);
-		        //alert(data);
-		        table_switch = data;
-		    });
 		}
 
 		function getSelectedRadio(buttonGroup) 
@@ -255,6 +240,7 @@
                 }
             }
 
+
         }
 
 	function createcsv()
@@ -270,27 +256,28 @@
 			return;
 		}
 		var lastVals = new Array( data.getNumberOfColumns() );
-		
+		w.document.write("<html><body><textarea  rows=\"30\" cols=\"100\">");
 		for(var C = 0 ; C < data.getNumberOfColumns(); C++ )
 		{
 			w.document.write( data.getColumnLabel(C) +"," );
 				
 		}
 
-		w.document.write("<br>");
+		w.document.write("\r\n");
 
 		while( i < data.getNumberOfRows() )
 		{
 			var z = 1;
+			var changed=false;
 			var d = new Date( data.getValue( i , 0 ) );
 			var str = d.toLocaleTimeString() +",";
-			w.document.write(str);
 			while( z < data.getNumberOfColumns() )
 			{
 				var val = data.getValue( i , z );
-				if( val !='')
+				if( !isNaN( val ) )
 				{
 					lastVals[z - 1] = val;
+					changed=true;
 				}
 				else
 				{
@@ -298,22 +285,24 @@
 					{
 						val = lastVals[z - 1];
 					}
-					//alert("nuller");
-
 				}
-				str = val+",";
-				w.document.write(str); // the csv string from for example a jquery plugin
+				str += val+",";
 				z++;
 			}
-
-			w.document.write("<br>");
+			if( changed==true )
+			{
+				str += "\r\n";
+				w.document.write(str);
+			}			
 			i++;
 		}
+		w.document.write("</textarea></body></html>");
 		w.document.close();
 	}
 
         function loadChart(sd, ed) {
             
+			//alert(sd);
 			$('#refreshBut').hide();
 			$('#refresh').append('<div class="load refresh"><img src="images/ajax-loader.gif" /></div>');
 			var fids = [];
@@ -330,13 +319,46 @@
 			//window_width = 100;
 			window_width = GetWindowWidthValue();// getSelectedRadioValue(document.ww.windowwidth);
 			//alert( window_width );
-			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed ,sw: table_switch , ww: window_width}, function (json) {
-			    if (json.table.rows) {
-			        $.each(json.table.rows, function (i, d) {
-			            d.c[0].v = new Date(d.c[0].v * 1000);
-			        });
-			        data = new google.visualization.DataTable(json.table);
-			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' });
+			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed , ww: window_width}, function (json) {
+				//alert(json['startunixtime']);
+				//alert(json.query);
+				var t0 = parseInt(json.startunixtime);
+				data = new google.visualization.DataTable();
+				data.addColumn('datetime', 'Date');
+				//alert(json.table.cols.length);
+				for(var z = 0 ; z < json.table.cols.length; z++)
+				{
+					data.addColumn('number',json.table.cols[z]['label'],json.table.cols[z]['id']);
+				}
+				//alert(fids[0].toString());
+				
+				for(var i = 0 ; i < json.table.time.length; i++)
+				{
+					///*				
+					var newrow = new Array();
+					var date = new Date( ( parseInt( json.table.time[i]) + t0)*1000 );
+					//alert(date);
+					newrow.push( date );
+					//alert('here');
+					for( var t = 0 ; t < fids.length; t++)
+					{
+						var ccc=parseFloat(json.table.ys[fids[t]][i]);
+						//alert(ccc);
+						newrow.push( ccc );
+					}
+					//alert(ccc);
+					data.addRow( newrow );
+					
+				}
+
+				if(json.table.time.length > 0)
+				{
+			   // if (json.table.rows) {
+			    //    $.each(json.time.rows, function (i, d) {
+			     //       d.c[0].v = //new Date( ( parseInt(d.c[0].v) + t0 )* 1000);
+			      //  });
+			        
+			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30'});
 			        $('#refreshBut').show();
 			        $('.load').remove();
 			    } else {

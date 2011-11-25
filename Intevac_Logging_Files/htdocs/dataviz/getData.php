@@ -14,6 +14,7 @@ $ed =  (isset($_GET['ed']) ? $_GET['ed'] : '');
 $ww = (isset($_GET['ww']) ? $_GET['ww'] : '');
 
 //oldest mem timestamp (the table switch)
+/*
 if(isset($_GET['sw'])) //try to post to save time
 {
   $sw = $_GET['sw'];
@@ -23,7 +24,7 @@ else
   $result = mysql_query("select UNIX_TIMESTAMP(Time) as tstamp FROM opc_data_mem  where 1 ORDER BY Time ASC LIMIT 1", $link);
   $row = mysql_fetch_assoc($result);
 	$sw = $row['tstamp'];
-}
+}*/
 
 
 
@@ -72,8 +73,8 @@ if ($q == 'd'){
 	//echo $query;
 	$result = mysql_query($query, $link);
 	$res['status'] = 'ok';
-	$res['table']['cols'][0] = array('id' => '','label' => 'Time', 'type' => 'datetime');
-	$i = 1;
+	//$res['table']['cols'][0] = array('id' => '','label' => 'Time', 'type' => 'datetime');
+	$i = 0;
 	while ($row = mysql_fetch_assoc($result)) {
 	    $res['table']['cols'][$i] = array('id' => $row["id"], 'label'=> 'ST:'.$row["StationID"].'  '.strrchr( $row["Name"] ,'.').'  '.$row["Units"], 'type'=>'number');
 	    $i++; 
@@ -81,47 +82,70 @@ if ($q == 'd'){
 	
 	$i = 0;
 	$query = "select unix_timestamp(time) as time, ";
-	foreach($fid as $f){
-		$query = $query."max(IF(id=$f,value,'')) as '$f'";
-		if ($i<sizeof($fid)-1){
-			$query = $query.", ";
+	if( count($fid) == 1 ) # if the query only has one field this query is way faster
+	{
+		$query = $query."Value as '$fid[0]'";
+	}
+	else
+	{
+		foreach($fid as $f)
+		{
+			$query = $query."max(IF(id=$f,value,'')) as '$f'";
+		
+			if ($i<sizeof($fid)-1)
+			{
+				$query = $query.", ";
+			}
+			$i++;
 		}
-		$i++;
 	}
-	
-  
-	
+	$query .= ' from opc_data_mem';
 	if ($sd && $ed)
-  {
-    if( $sw < $sd ) //if the low time limit is greater than the old mem record, use mem table
-    {
-      $query .= ' from opc_data_mem';
-    }
-    else
-    {
-      $query .= ' from opc_data';
-    }
-		$query .= " where time > '$sd' and time < '$ed'";
+  	{
+		$query .= " where Time > '$sd' and Time < '$ed'";
 	}
-  else 
-  {
-    $query .= ' from opc_data_mem';
-    $query .= " where time > NOW() - INTERVAL $ww SECOND";
-  }
-	$query .= ' group by time order by time limit 300000';
+  	else 
+  	{
+    		$query .= " where time > NOW() - INTERVAL $ww SECOND";
+  	}
+	if( count($fid) == 1 )
+	{
+		$query .= " AND ID='$fid[0]' ";
+		$query .= 'order by time ASC';
+	}
+	else
+	{
+		$query .= ' group by time order by time ASC';
+	}
+	$query .= ' limit 466000';
   
-	//echo $query;
+
+	$res['query'] = $query;
+	$startunixtime = 0;
+	$res['table']['time'] = array();
+	$res['table']['ys'] = array();
+	foreach($fid as $f)
+	{
+		$res['table']['ys'][$f] = array();
+	}
 	$result = mysql_query($query, $link);
 	$i = 0;
-	while ($row = mysql_fetch_row($result)) {
-		$j = 0;
-		while ($j<=sizeof($fid)){
-			$res['table']['rows'][$i]['c'][$j]['v'] = $row[$j];
-			$j++;
+	while ($row = mysql_fetch_assoc($result)) 
+	{		
+		if( $i == 0 )
+		{
+			$startunixtime = intval($row['time']);
 		}
-		$i++;
+		$res['table']['time'][] = intval($row['time'])  -  $startunixtime;//$res['table']['rows'][$i]['c'][0]['v']
+		foreach($fid as $f)
+		{
+			$res['table']['ys'][$f][] = $row[$f];
+		}
+	$i++;
 	}
 	
+
+	$res['startunixtime'] = $startunixtime;
 	echo json_encode($res);
 }
 
