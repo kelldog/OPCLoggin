@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using MySql.Data.MySqlClient;
 using System.Threading;
+using System.Diagnostics;
 
 namespace GenerateCFGFile
 {
@@ -70,7 +71,7 @@ Group Web Live Data Mode=0";
         static void Main(string[] args)
         {
 
-            bool add_fields_aqt_fields_table = false;
+            bool add_fields_aqt_fields_table = true;
 
             string outFilePath = "";
             string AQT_Fields_To_Graph_QueryPath = "";
@@ -117,6 +118,8 @@ Group Web Live Data Mode=0";
                     MySqlDataReader reader = c.ExecuteReader();
                     List<string> Names = new List<string>();
                     List<int> IDs = new List<int>();
+
+                    Trace.WriteLine(next);
                     while (reader.Read())
                     {
                         Names.Add(reader.GetString(0));

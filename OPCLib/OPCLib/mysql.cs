@@ -47,7 +47,7 @@ namespace OPCLib
 
         public static int FILL_MEMORY_TABLE_FROM(MySqlConnection Conn, DateTime StartTime, DateTime EndTime)
         {
-            string command = string.Format("INSERT INTO opc_data_mem SELECT * FROM opc_data WHERE Time > \'{0}\' AND Time <= \'{1}\'", String.Format("{0:yyyy-MM-dd HH:mm:ss}", StartTime), String.Format("{0:yyyy-MM-dd HH:mm:ss}", EndTime));
+            string command = string.Format("INSERT INTO opc_data_mem SELECT * FROM opc_data WHERE Time > \'{0}\' AND Time <= \'{1}\'", string.Format("{0:yyyy-MM-dd HH:mm:ss}", StartTime), string.Format("{0:yyyy-MM-dd HH:mm:ss}", EndTime));
             MySqlCommand c = new MySqlCommand(command, Conn);
             int rows_affected = c.ExecuteNonQuery();
             c.Dispose();
