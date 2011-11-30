@@ -24,6 +24,8 @@
 		var run = 0;
 		var rate = 4000; // refresh rate in ms
 
+		
+
 		var window_width;// the width of window on live update
 		var timeSpanWidth; //a user friend field to show the amount of time between the start and end date (in Minutes)
 		google.setOnLoadCallback(setupChart);
@@ -217,7 +219,31 @@
         
         function UpdateTimeInterval() //this function calculates and displays the number of minutes of data the user has selected
         {
-        
+		//var myDate = '30.11.2011 11:22:12';
+	//	var tt = $.datepicker.formatDate('yy-mm-dd hh:ii:ss',$.datepicker.parseDate('dd.mm.yy hh:ii:ss', myDate));
+	//	alert(tt);
+/*
+		var d =  new Date();//$('#startDate').val()).getTime();
+		//alert(String(Date.parse($('#startDate').val())));
+		d.format("isoDateTime");
+		//alert(String($('#startDate').val()));
+		//dateFormat.masks.
+		//d.format($('#startDate').val(),"isoDateTime");
+		d.parse($('#startDate').val());
+		alert(d);
+		//var date2 = new Date();//$('#endDate').val()).getTime();
+		//alert($('#endDate').val());
+		//var date2= 0;
+*/
+	//	if(isNaN(date) || isNaN(date2))
+	//	{
+	//		return;
+	//	}
+	//	var secs = date - date2;
+	//	secs = secs / 1000;
+	//	alert(secs);
+	        
+		/*
             var sd = new Date(document.getElementById("startDate").value);
             var sdEpoch = sd.getTime() / 1000.0;
 
@@ -229,7 +255,7 @@
             {
                 minutes = (edEpoch - sdEpoch) / 60.0;
                 document.getElementById("timeSpanMinutes").innerHTML = minutes +' Minutes of Data';// sprintf("%s %s", "aaa", "Minutes of Data");
-            }
+            }*/
         }
         function GetWindowWidthValue() {
             
@@ -239,6 +265,7 @@
                     return radioValue;
                 }
             }
+
 
 
         }
@@ -322,6 +349,8 @@
 			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed , ww: window_width}, function (json) {
 				//alert(json['startunixtime']);
 				//alert(json.query);
+				var AxisMapping = new Array();
+				//AxisMapping.push(0);
 				var t0 = parseInt(json.startunixtime);
 				data = new google.visualization.DataTable();
 				data.addColumn('datetime', 'Date');
@@ -329,6 +358,20 @@
 				for(var z = 0 ; z < json.table.cols.length; z++)
 				{
 					data.addColumn('number',json.table.cols[z]['label'],json.table.cols[z]['id']);
+					if( z == 0 )
+					{
+						AxisMapping.push(0);
+					}
+					if( z > 0 )
+					{
+						if( json.table.cols[z]['units'] != json.table.cols[0]['units']  )
+						{
+							AxisMapping.push(1);
+						}
+						else{
+							AxisMapping.push(0);
+						}
+					}
 				}
 				//alert(fids[0].toString());
 				
@@ -358,7 +401,7 @@
 			     //       d.c[0].v = //new Date( ( parseInt(d.c[0].v) + t0 )* 1000);
 			      //  });
 			        
-			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30'});
+			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30', 'scaleType':'allmaximized','scaleColumns': AxisMapping});
 			        $('#refreshBut').show();
 			        $('.load').remove();
 			    } else {

@@ -76,7 +76,7 @@ if ($q == 'd'){
 	//$res['table']['cols'][0] = array('id' => '','label' => 'Time', 'type' => 'datetime');
 	$i = 0;
 	while ($row = mysql_fetch_assoc($result)) {
-	    $res['table']['cols'][$i] = array('id' => $row["id"], 'label'=> 'ST:'.$row["StationID"].'  '.strrchr( $row["Name"] ,'.').'  '.$row["Units"], 'type'=>'number');
+	    $res['table']['cols'][$i] = array('id' => $row["id"], 'label'=> 'ST:'.$row["StationID"].' '.strrchr( $row["Name"] ,'.').' '.$row["Units"], 'type'=>'number','units'=>$row["Units"]);
 	    $i++; 
 	}
 	
@@ -115,6 +115,18 @@ if ($q == 'd'){
 	}
 	else
 	{
+		$query .=' AND ID IN(';
+		$r = 0;
+		foreach($fid as $f)
+		{
+			$query.="$f";
+			if ($r != sizeof($fid)-1)
+			{
+				$query.=',';
+			}
+			$r++;
+		}
+		$query .=')';
 		$query .= ' group by time order by time ASC';
 	}
 	$query .= ' limit 466000';
