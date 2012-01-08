@@ -24,7 +24,8 @@
 		var run = 0;
 		var rate = 4000; // refresh rate in ms
 
-		
+		//alert(getURLParam('sd'));
+
 
 		var window_width;// the width of window on live update
 		var timeSpanWidth; //a user friend field to show the amount of time between the start and end date (in Minutes)
@@ -135,6 +136,19 @@
 
 		function setupChart() 
 		{
+
+			var _ed = getURLParam('ed');
+			var _sd = getURLParam('sd');
+			if(_ed !='')
+			{
+				$('#endDate').val( _ed );	
+			}
+			if( _sd != '')
+			{
+				$('#startDate').val( _sd );
+			}
+
+
 			var data = new google.visualization.DataTable();
 			data.addColumn('datetime', 'Date');
 			data.addColumn('number', 'Data');
@@ -164,6 +178,8 @@
 			$('#ctrlBut').click(togRun);
 
 			$('#csvBut').click(createcsv);
+			$('#startDate').change(getTimeSpan);
+			$('#endDate').change(getTimeSpan);
 			getSaves();
 		}
 		
@@ -186,89 +202,58 @@
 	
 		}
 
-		function getSelectedRadio(buttonGroup) 
-        {
-		    // returns the array number of the selected radio button or -1 if no button is selected
-		    if (buttonGroup[0]) { // if the button group is an array (one button is not an array)
-		        for (var i = 0; i < buttonGroup.length; i++) {
-		            if (buttonGroup[i].checked) {
-		                return i
-		            }
-		        }
-		    } else {
-		        if (buttonGroup.checked) { return 0; } // if the one button is checked, return zero
-		    }
-		    // if we get to this point, no radio button is selected
-		    return -1;
+
+
+        function GetWindowWidthValue() 
+	{
+		var myRadio = $('input[name=windowwidth]');
+
+		return   myRadio.filter(':checked').val();            
+
+        }
+
+      function stringToDate(string) 
+	{
+                        var matches;
+                    if (matches = string.match(/^(\d{4,4})-(\d{2,2})-(\d{2,2}) (\d{2,2}):(\d{2,2}):(\d{2,2})$/)) {
+                       return new Date(matches[1], matches[2] - 1, matches[3], matches[4], matches[5], matches[6]);
+                    } else {
+                       return null;
+                    };
+       }
+
+                //Convert duration from milliseconds to 0000:00:00.00 format
+        function MillisecondsToDuration(n) {
+                var hms = "";
+                var dtm = new Date();
+                dtm.setTime(n);
+                var h = "000" + Math.floor(n / 3600000);
+                var m = "0" + dtm.getMinutes();
+                var s = "0" + dtm.getSeconds();
+                var cs = "0" + Math.round(dtm.getMilliseconds() / 10);
+                hms = h.substr(h.length-4) + ":" + m.substr(m.length-2) + ":";
+                hms += s.substr(s.length-2) + "." + cs.substr(cs.length-2);
+                return hms;
+        }
+	function getTimeSpan()
+	{
+
+		var bs = $('#startDate').val();
+
+		var es = $('#endDate').val();
+
+		if( bs.length<11 || es.length<11 )
+		{
+			return;
 		}
+                var beginDate = stringToDate(bs);
+                var endDate = stringToDate(es);
 
-		function getSelectedRadioValue(buttonGroup) 
-        {
-            // returns the value of the selected radio button or "" if no button is selected
-            var i = getSelectedRadio(buttonGroup);
-            if (i == -1) {
-                return "";
-            } else {
-                if (buttonGroup[i]) { // Make sure the button group is an array (not just one button)
-                    return buttonGroup[i].value;
-                } else { 
-                    return buttonGroup.value;
-                }
-            }
-        }
-        
-        function UpdateTimeInterval() //this function calculates and displays the number of minutes of data the user has selected
-        {
-		//var myDate = '30.11.2011 11:22:12';
-	//	var tt = $.datepicker.formatDate('yy-mm-dd hh:ii:ss',$.datepicker.parseDate('dd.mm.yy hh:ii:ss', myDate));
-	//	alert(tt);
-/*
-		var d =  new Date();//$('#startDate').val()).getTime();
-		//alert(String(Date.parse($('#startDate').val())));
-		d.format("isoDateTime");
-		//alert(String($('#startDate').val()));
-		//dateFormat.masks.
-		//d.format($('#startDate').val(),"isoDateTime");
-		d.parse($('#startDate').val());
-		alert(d);
-		//var date2 = new Date();//$('#endDate').val()).getTime();
-		//alert($('#endDate').val());
-		//var date2= 0;
-*/
-	//	if(isNaN(date) || isNaN(date2))
-	//	{
-	//		return;
-	//	}
-	//	var secs = date - date2;
-	//	secs = secs / 1000;
-	//	alert(secs);
-	        
-		/*
-            var sd = new Date(document.getElementById("startDate").value);
-            var sdEpoch = sd.getTime() / 1000.0;
+                var n = endDate.getTime() - beginDate.getTime();
+		var totalMinutes = n /(60*1000);
+                
+	}
 
-            var ed = new Date(document.getElementById("endDate").value);
-            var edEpoch = ed.getTime() / 1000.0;
-            var minutes = 0;
-            var mess = "";
-            if (!isNaN(edEpoch) && !isNaN(sdEpoch)) 
-            {
-                minutes = (edEpoch - sdEpoch) / 60.0;
-                document.getElementById("timeSpanMinutes").innerHTML = minutes +' Minutes of Data';// sprintf("%s %s", "aaa", "Minutes of Data");
-            }*/
-        }
-        function GetWindowWidthValue() {
-            
-            for (index = 0; index < document.ww.windowwidth.length; index++) {
-                if (document.ww.windowwidth[index].checked) {
-                    var radioValue = document.ww.windowwidth[index].value;
-                    return radioValue;
-                }
-            }
-
-
-
-        }
 
 	function createcsv()
 	{
@@ -355,16 +340,16 @@
 				data = new google.visualization.DataTable();
 				data.addColumn('datetime', 'Date');
 				//alert(json.table.cols.length);
-				for(var z = 0 ; z < json.table.cols.length; z++)
+				for( var z = 0 ; z < fids.length; z++)
 				{
-					data.addColumn('number',json.table.cols[z]['label'],json.table.cols[z]['id']);
+					data.addColumn('number',json.table.cols[fids[z]]['label'],json.table.cols[fids[z]]['id']);
 					if( z == 0 )
 					{
 						AxisMapping.push(0);
 					}
 					if( z > 0 )
 					{
-						if( json.table.cols[z]['units'] != json.table.cols[0]['units']  )
+						if( json.table.cols[fids[z]]['units'] != json.table.cols[fids[0]]['units']  )
 						{
 							AxisMapping.push(1);
 						}
@@ -401,7 +386,7 @@
 			     //       d.c[0].v = //new Date( ( parseInt(d.c[0].v) + t0 )* 1000);
 			      //  });
 			        
-			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30', 'scaleType':'allmaximized','scaleColumns': AxisMapping});
+			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30', 'scaleType':'allmaximized'});
 			        $('#refreshBut').show();
 			        $('.load').remove();
 			    } else {
@@ -413,6 +398,26 @@
 			    }
 			});
 		}
+
+
+		function getURLParam(strParamName){
+			var strReturn = "";
+			var strHref = window.location.href;
+			if ( strHref.indexOf("?") > -1 ){
+			var strQueryString = strHref.substr(strHref.indexOf("?")).toLowerCase();
+			var aQueryString = strQueryString.split("&");
+			for ( var iParam = 0; iParam < aQueryString.length; iParam++ ){
+			if (aQueryString[iParam].indexOf(strParamName + "=") > -1 ){
+			var aParam = aQueryString[iParam].split("=");
+			strReturn = aParam[1];
+			break;
+			}
+			}
+			}
+			return strReturn;
+		}
+
+
 	</script>
 </head>
 <body>
@@ -433,10 +438,10 @@
 						<span id='save'><input id='saveBut' type='button' value='Save State' /></span>
 						<span id='delete'><input id='delBut' type='button' value='Delete Current State' /></span>
 						  
-						<span id='csvSave'><input id='csvBut' type='button' value='save data to csv file'/></span>
+						<span id='csvSave'><input id='csvBut' type='button' value='save data to csv file' /></span>
 						<div id='wStatus'></div>
 					</div>
-					<div class='row'>
+					<div class='row'><br/>
 						<span id='dHeader'><h2>Choose Data:</h2></span>
 					</div>
 					<div class='row'>
@@ -449,9 +454,9 @@
 						<span id='dHeader'><h2>Choose Date:</h2></span>
 					</div>
 					<div class='ctrlRow'>
-						<input type='text' id='startDate' class='date' placeholder='Start Date' onchange="UpdateTimeInterval()" />
-						<input type='text' id='endDate' class='date' placeholder='End Date' onchange="UpdateTimeInterval()" />
-                        <span id='timeSpanMinutes'>0 minutes</span>
+						<input type='text' id='startDate' class='date' placeholder='Start Date'  />
+						<input type='text' id='endDate' class='date' placeholder='End Date'  />
+                        
 					</div>
 					<div class='ctrlRow'>
 						<span id='refresh'><input type='button' id='refreshBut' value='Reload Chart'/></span>
@@ -473,6 +478,13 @@
                         <INPUT TYPE='RADIO' name="windowwidth" VALUE="600">10 Minutes 
                         <INPUT TYPE='RADIO' name="windowwidth" VALUE="3600">60 Minutes 
                     </form name="ww">
+<br>Database 
+<form name="whichDB">
+<select name="DB" size=1>
+<option value="db2">rev 2 config (current)
+<option value="db1">rev 1 config before Nov 28, 2011
+</select>
+</form>
 					</div>
 				</div>
 			</div>

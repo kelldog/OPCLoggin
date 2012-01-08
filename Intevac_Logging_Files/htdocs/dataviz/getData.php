@@ -57,7 +57,7 @@ if ($q == 'z')
 }
 
 if ($q == 'd'){
-	sort($fid);
+	//sort($fid);
 	
 	$i = 0;
 	$where = '';
@@ -76,7 +76,7 @@ if ($q == 'd'){
 	//$res['table']['cols'][0] = array('id' => '','label' => 'Time', 'type' => 'datetime');
 	$i = 0;
 	while ($row = mysql_fetch_assoc($result)) {
-	    $res['table']['cols'][$i] = array('id' => $row["id"], 'label'=> 'ST:'.$row["StationID"].' '.strrchr( $row["Name"] ,'.').' '.$row["Units"], 'type'=>'number','units'=>$row["Units"]);
+	    $res['table']['cols'][$row["id"]] = array('id' => $row["id"], 'label'=> 'ST:'.$row["StationID"].' '.strrchr( $row["Name"] ,'.').' '.$row["Units"], 'type'=>'number','units'=>$row["Units"]);
 	    $i++; 
 	}
 	

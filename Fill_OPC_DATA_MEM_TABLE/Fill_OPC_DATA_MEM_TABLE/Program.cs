@@ -14,8 +14,9 @@ namespace Fill_OPC_DATA_MEM_TABLE
         {
 
             MySqlConnection Conn = OPCLib.AQT_Database.GetMYSQLConnection();
-            DateTime ToCopyFrom = DateTime.Now;
-            int HowManyDaysBack = 30;
+
+          
+            int HowManyDaysBack = 18;
             try
             {
                 HowManyDaysBack = int.Parse(args[0]);
@@ -27,6 +28,7 @@ namespace Fill_OPC_DATA_MEM_TABLE
 
             //TimeSpan TimeStep = new TimeSpan(1,0,0,0,0);
             DateTime LastTime = DateTime.Now;
+            DateTime ToCopyFrom = LastTime;
             try
             {
                 Conn.Open();
@@ -35,7 +37,6 @@ namespace Fill_OPC_DATA_MEM_TABLE
 
                    // if(Conn.State == MysqlCon
                     ToCopyFrom = ToCopyFrom.Subtract(new TimeSpan(1, 0, 0, 0, 0));
-
                     int RecordsCopied = OPCLib.AQT_Database.FILL_MEMORY_TABLE_FROM(Conn, ToCopyFrom, LastTime);
                     Console.WriteLine(string.Format("Copied {0} records from {1} To opc_data_mem TABLE", RecordsCopied, ToCopyFrom));
                     LastTime = ToCopyFrom;
