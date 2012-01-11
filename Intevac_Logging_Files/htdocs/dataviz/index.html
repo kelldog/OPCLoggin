@@ -340,24 +340,28 @@
 				data = new google.visualization.DataTable();
 				data.addColumn('datetime', 'Date');
 				//alert(json.table.cols.length);
+				//AxisMapping.push(0);
 				for( var z = 0 ; z < fids.length; z++)
 				{
 					data.addColumn('number',json.table.cols[fids[z]]['label'],json.table.cols[fids[z]]['id']);
 					if( z == 0 )
 					{
-						AxisMapping.push(0);
+						AxisMapping.push(1);
 					}
 					if( z > 0 )
 					{
 						if( json.table.cols[fids[z]]['units'] != json.table.cols[fids[0]]['units']  )
 						{
-							AxisMapping.push(1);
+							AxisMapping.push(2);
+							//alert('2');
 						}
-						else{
-							AxisMapping.push(0);
+						else
+						{
+							AxisMapping.push(1);
 						}
 					}
 				}
+				//alert(AxisMapping.toString());
 				//alert(fids[0].toString());
 				
 				for(var i = 0 ; i < json.table.time.length; i++)
@@ -385,8 +389,10 @@
 			    //    $.each(json.time.rows, function (i, d) {
 			     //       d.c[0].v = //new Date( ( parseInt(d.c[0].v) + t0 )* 1000);
 			      //  });
-			        
-			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30', 'scaleType':'allmaximized'});
+
+				//'scaleColumns':AxisMapping,'scaleType':'allmaximized'
+			        //'scaleColumns':AxisMapping,
+			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30','annotationsWidth':'80','scaleType':'maximized'});
 			        $('#refreshBut').show();
 			        $('.load').remove();
 			    } else {

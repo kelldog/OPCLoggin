@@ -57,7 +57,7 @@ if ($q == 'z')
 }
 
 if ($q == 'd'){
-	//sort($fid);
+	sort($fid);
 	
 	$i = 0;
 	$where = '';

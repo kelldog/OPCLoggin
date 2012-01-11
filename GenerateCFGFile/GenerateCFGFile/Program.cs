@@ -92,11 +92,32 @@ Group Web Live Data Mode=0";
             Console.Write(string.Format("Using outfile: {0}", outFilePath));
             Console.Write(string.Format("Using Query File: {0}", AQT_Fields_To_Graph_QueryPath));
             Console.Write(string.Format("Using Unit Query File: {0}", UnitQueryFile));
-            
+           
+    
+            string[] excluded_setpointValues = new string[]
+            {
+        "bias_current_stpt"
+        ,"bias_voltage_stpt"
+        ,"coil_current_side_a_stpt"
+        ,"coil_current_side_b_stpt"
+        ,"hvps_current_stpt"
+        ,"hvps_a_voltage_stpt"
+        ,"hvps_b_current_stpt"
+        ,"hvps_side_b_stpt"
+        ,"hvps_b_voltage_stpt"
+        ,"phantom_disk_power_stpt"
+        ,"mfc_5_stpt"
+        ,"mfc_6_stpt"
+        ,"mfc_7_stpt"
+        ,"mfc_8_stpt"
+            };
+                
             Thread.Sleep(1000);
 
             string[] Queries = File.ReadAllLines(AQT_Fields_To_Graph_QueryPath);
             string[] UnitLines = File.ReadAllLines(UnitQueryFile);
+
+           
 
             StreamWriter outFile = new StreamWriter(outFilePath);
             MySqlConnection conn = new MySqlConnection(Program.connStr);
@@ -125,11 +146,10 @@ Group Web Live Data Mode=0";
                         Names.Add(reader.GetString(0));
                         int ID = reader.GetInt32(1);
                         IDs.Add(ID);
-                       
-
+                      
                     }
                     reader.Close();
-                    reader.Dispose();
+            //        reader.Dispose();
                     if (IDs.Count == 0)
                     {
                         continue;
@@ -140,17 +160,23 @@ Group Web Live Data Mode=0";
 
                         if( Names[k].ToUpper() != Names[k])//watch out for lower case duplicates on the POWER B signal
                         {
-                            int uu= 0;
+                            //int uu= 0;
                             Console.WriteLine("found lower case duplicate: " + Names[k]);
                             continue;
+                        }
+                        foreach (string sss in excluded_setpointValues)
+                        {
+                            if (Names[k].ToLower().Contains(sss))
+                            {
+                                Console.WriteLine("excluded setpoint: " + Names[k]);
+                                continue;
+                            }
                         }
                         MySqlCommand c2 = new MySqlCommand(string.Format("INSERT INTO aqt_fields (ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type) SELECT ID,Name,Scale,StationID,StationTypeID,ChamberTypeID,Units,AQT_Name,Type FROM fields WHERE ID = {0}", IDs[k]), conn);
                         if (add_fields_aqt_fields_table)
                         {
                             try
-                            {
-
-                                
+                            {       
                                 c2.ExecuteNonQuery();
                                 Console.WriteLine(string.Format("ID cloned {0}", IDs[k]));
                             }
@@ -171,16 +197,13 @@ Group Web Live Data Mode=0";
 
                 }
 
-                
+            
                 outFile.WriteLine(header);
                 foreach (string s in loadedfields)
                 {
-                    Console.WriteLine("Processing" + s);
-                    
+                    Console.WriteLine("Processing" + s);   
                     outFile.WriteLine(string.Format("Item Name={0}\r\nItem Format Data As=0\r\nItem Format Data As On Label=\r\nItem Format Data As Off Label=\r\nItem Format Data As Num Dec Places=2\r\nItem={0}", s));
                 }
-
-
             }
             catch (Exception ex)
             {
