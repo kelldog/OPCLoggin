@@ -165,25 +165,28 @@ namespace OPCLib
                 {
                     Conn.Open();
                 }
-                try
+                if (CyclesCounter > CyclesPerHDTableWrite)
                 {
-                    if (CyclesCounter > CyclesPerHDTableWrite)
+                    try
                     {
                         CyclesCounter = 0;
-                        
-                        MySQLInsertSuccesses = AQT_Database.WriteInFileToDatabase(Conn, Path.GetFileName( HDTablePath ) );
+                        MySQLInsertSuccesses = AQT_Database.WriteInFileToDatabase(Conn, Path.GetFileName(HDTablePath));
                         Console.WriteLine("Wrote To HD Table");
+                        
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    finally
+                    {
                         File.Delete(HDTablePath);
                         Console.WriteLine("deleted file: " + HDTablePath);
                     }
-                    else
-                    {
-                        CyclesCounter++;
-                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine(ex.Message);
+                    CyclesCounter++;
                 }
                 try
                 {
@@ -194,8 +197,6 @@ namespace OPCLib
                     Console.WriteLine(ex.Message);
                 }
                 MySQLInsertFailures = TotalRecordsToInsert - MySQLInsertSuccesses;
-
-                
                 Console.WriteLine(string.Format("Inserted {0} records out of {1} @ {2} on {3}. {4} unchanged fields. {5} Realigned fields", MySQLInsertSuccesses, TotalRecordsToInsert, DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString(), UnchangedFields, RelalignedFields));
             }
             catch (Exception ex)
@@ -211,9 +212,7 @@ namespace OPCLib
                 HDFile.Close();
                 HDFile.Dispose();
                 File.Delete(inFilePath);
-                
             }
-            
         }
     }
 }
