@@ -16,7 +16,7 @@ namespace Fill_OPC_DATA_MEM_TABLE
             MySqlConnection Conn = OPCLib.AQT_Database.GetMYSQLConnection();
 
           
-            int HowManyDaysBack = 18;
+            int HowManyDaysBack = 25;
             try
             {
                 HowManyDaysBack = int.Parse(args[0]);

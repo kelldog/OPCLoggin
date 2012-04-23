@@ -25,6 +25,17 @@ namespace OPCLib
             c.Dispose();
         }
 
+        public static void load_to_table(int ID, float Value, DateTime time, MySqlConnection conn,string table)
+        {
+            MySqlCommand c = new MySqlCommand("INSERT INTO " + table + " (Value,Time,ID) VALUES (@val,@t,@id)", conn);
+            c.Parameters.Add(FillP("@val", Value, MySqlDbType.Float));
+            c.Parameters.Add(FillP("@id", ID, MySqlDbType.Int32));
+            c.Parameters.Add(FillP("@t", time, MySqlDbType.DateTime));
+            //c.Parameters.Add(FillParam("@st", d.fieldinfo.StationInfo.StationID, conn, System.Data.SqlDbType.TinyInt));
+            c.ExecuteNonQuery();
+            c.Dispose();
+        }
+
         public static int WriteInFileToDatabase(MySqlConnection conn,string inFile)
         {
             string command = string.Format("LOAD DATA INFILE \'{0}\' INTO TABLE opc_data \n FIELDS TERMINATED BY \',\' \n LINES TERMINATED BY \'\\r\\n\';" , inFile );

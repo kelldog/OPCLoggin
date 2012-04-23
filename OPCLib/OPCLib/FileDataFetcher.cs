@@ -171,7 +171,9 @@ namespace OPCLib
                     {
                         CyclesCounter = 0;
                         MySQLInsertSuccesses = AQT_Database.WriteInFileToDatabase(Conn, Path.GetFileName(HDTablePath));
-                        Console.WriteLine("Wrote To HD Table");
+                        File.Delete(HDTablePath);
+                        Console.WriteLine("deleted file: " + HDTablePath);
+			Console.WriteLine("Wrote To HD Table");
                         
                     }
                     catch (Exception ex)
@@ -180,8 +182,7 @@ namespace OPCLib
                     }
                     finally
                     {
-                        File.Delete(HDTablePath);
-                        Console.WriteLine("deleted file: " + HDTablePath);
+
                     }
                 }
                 else

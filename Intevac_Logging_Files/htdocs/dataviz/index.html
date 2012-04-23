@@ -332,7 +332,7 @@
 			window_width = GetWindowWidthValue();// getSelectedRadioValue(document.ww.windowwidth);
 			//alert( window_width );
 			$.getJSON("getData.php", { q: 'd', fid: fids, sd: sd, ed: ed , ww: window_width}, function (json) {
-				//alert(json['startunixtime']);
+				//alert(sd);
 				//alert(json.query);
 				var AxisMapping = new Array();
 				//AxisMapping.push(0);
@@ -341,29 +341,32 @@
 				data.addColumn('datetime', 'Date');
 				//alert(json.table.cols.length);
 				//AxisMapping.push(0);
+				var axismap = "";
 				for( var z = 0 ; z < fids.length; z++)
 				{
 					data.addColumn('number',json.table.cols[fids[z]]['label'],json.table.cols[fids[z]]['id']);
 					if( z == 0 )
 					{
+						axismap="0";
 						AxisMapping.push(1);
 					}
 					if( z > 0 )
 					{
 						if( json.table.cols[fids[z]]['units'] != json.table.cols[fids[0]]['units']  )
 						{
-							AxisMapping.push(2);
+							axismap+=",1";
+							//AxisMapping.push(2);
 							//alert('2');
 						}
 						else
-						{
+						{	axismap+=",0";
 							AxisMapping.push(1);
 						}
 					}
 				}
 				//alert(AxisMapping.toString());
 				//alert(fids[0].toString());
-				
+				//alert(axismap);
 				for(var i = 0 ; i < json.table.time.length; i++)
 				{
 					///*				
@@ -392,7 +395,7 @@
 
 				//'scaleColumns':AxisMapping,'scaleType':'allmaximized'
 			        //'scaleColumns':AxisMapping,
-			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30','annotationsWidth':'80','scaleType':'maximized'});
+			        chart.draw(data, { 'legendPosition': 'newRow', 'wmode': 'opaque' ,'fill':'30','annotationsWidth':'80','scaleType':'allmaximized','scaleColumns':axismap});
 			        $('#refreshBut').show();
 			        $('.load').remove();
 			    } else {

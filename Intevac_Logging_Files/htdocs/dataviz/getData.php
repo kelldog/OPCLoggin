@@ -14,17 +14,18 @@ $ed =  (isset($_GET['ed']) ? $_GET['ed'] : '');
 $ww = (isset($_GET['ww']) ? $_GET['ww'] : '');
 
 //oldest mem timestamp (the table switch)
-/*
+//UNIX_TIMESTAMP()
+
 if(isset($_GET['sw'])) //try to post to save time
 {
   $sw = $_GET['sw'];
 }
 else
 {
-  $result = mysql_query("select UNIX_TIMESTAMP(Time) as tstamp FROM opc_data_mem  where 1 ORDER BY Time ASC LIMIT 1", $link);
+  $result = mysql_query("select Time as tstamp FROM opc_data_mem  where 1 ORDER BY Time ASC LIMIT 1", $link);
   $row = mysql_fetch_assoc($result);
-	$sw = $row['tstamp'];
-}*/
+  $sw = $row['tstamp'];
+}
 
 
 
@@ -80,7 +81,7 @@ if ($q == 'd'){
 	    $i++; 
 	}
 	
-	$i = 0;
+	$i = 0;	
 	$query = "select unix_timestamp(time) as time, ";
 	if( count($fid) == 1 ) # if the query only has one field this query is way faster
 	{
@@ -99,7 +100,14 @@ if ($q == 'd'){
 			$i++;
 		}
 	}
-	$query .= ' from opc_data_mem';
+	if( $sd < $sw )
+	{
+		$query .= ' from opc_data';
+	}
+	else
+	{
+		$query .= ' from opc_data_mem';
+	}
 	if ($sd && $ed)
   	{
 		$query .= " where Time > '$sd' and Time < '$ed'";
