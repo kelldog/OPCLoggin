@@ -85,7 +85,7 @@ Group Web Live Data Mode=0";
             else
             {
                 outFilePath = @"C:\OPC_BACKEND_CODE\Intevac_Logging_Files\output.txt";
-                AQT_Fields_To_Graph_QueryPath = @"C:\OPC_BACKEND_CODE\Intevac_Logging_Files\AQTQuerryV2.txt";
+                AQT_Fields_To_Graph_QueryPath = @"C:\OPC_BACKEND_CODE\Intevac_Logging_Files\AQTQuerryV3.txt";
                 UnitQueryFile = @"C:\OPC_BACKEND_CODE\Intevac_Logging_Files\UnitsUpdateQuery.txt";
             }
 

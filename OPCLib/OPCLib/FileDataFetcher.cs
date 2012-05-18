@@ -11,26 +11,6 @@ namespace OPCLib
 {
     public static class FileDataFetcher
     {
-        static MySqlConnection Conn = AQT_Database.GetMYSQLConnection();
-        static int MaxNoUpdateCycles = 7;
-        static int CyclesPerHDTableWrite = 5;
-        static int CyclesCounter = 0;
-        //this depends on mysql installation
-        static string inFilePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\temp.csv";
-        static string HDTablePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\HDTable_temp.csv";
-        static Mutex block = new Mutex();
-        static string[] FileLines;
-        static string[] HeaderNames;
-        static List<OPCField> FieldInfos;
-        static List<string> OPCFieldNames;
-        static string[] line;
-        static int MySQLInsertSuccesses = 0;
-        static  int MySQLInsertFailures = 0;
-        static int ParseSuccesses = 0;
-        static int ParseFailures = 0;
-        static int TotalRecordsToInsert = 0;
-        static int UnchangedFields = 0;
-        static int RelalignedFields = 0;
 
         
         public static void ParseFile(string file)
@@ -42,13 +22,39 @@ namespace OPCLib
                 parseFile(file);
                 FieldInfos.Clear();
                 OPCFieldNames.Clear();
+                
                 block.ReleaseMutex();
 
         }
+
+
         private static void parseFile(string file)
         {
 
+             MySqlConnection Conn = AQT_Database.GetMYSQLConnection();
+             int MaxNoUpdateCycles = 7;
+             int CyclesPerHDTableWrite = 5;
+             int CyclesCounter = 0;
+            //this depends on mysql installation
+             string inFilePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\temp.csv";
+             string HDTablePath = @"C:\ProgramData\MySQL\MySQL Server 5.5\Data\aqt\HDTable_temp.csv";
+             Mutex block = new Mutex();
+             string[] FileLines;
+             string[] HeaderNames;
+             List<OPCField> FieldInfos;
+             List<string> OPCFieldNames;
+             string[] line;
+             int MySQLInsertSuccesses = 0;
+             int MySQLInsertFailures = 0;
+             int ParseSuccesses = 0;
+             int ParseFailures = 0;
+             int TotalRecordsToInsert = 0;
+             int UnchangedFields = 0;
+             int RelalignedFields = 0;
+
+
             FileLines = File.ReadAllLines(file);
+            
             File.Delete(file);
             Console.WriteLine("deleted file: " + file);
             HeaderNames = FileLines[0].Split(',');
@@ -173,8 +179,7 @@ namespace OPCLib
                         MySQLInsertSuccesses = AQT_Database.WriteInFileToDatabase(Conn, Path.GetFileName(HDTablePath));
                         File.Delete(HDTablePath);
                         Console.WriteLine("deleted file: " + HDTablePath);
-			Console.WriteLine("Wrote To HD Table");
-                        
+			            Console.WriteLine("Wrote To HD Table");
                     }
                     catch (Exception ex)
                     {
