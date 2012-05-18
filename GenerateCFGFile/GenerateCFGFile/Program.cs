@@ -66,6 +66,7 @@ Group Heart Beat Tag=
 Group Heart Beat Interval=1000
 Group Chart Data Rate=1000
 Group Web Live Data Mode=0";
+
         public static string connStr = "server=localhost;user=root;database=aqt;port=3306;password=aqt;";
 
         static void Main(string[] args)
@@ -96,28 +97,25 @@ Group Web Live Data Mode=0";
     
             string[] excluded_setpointValues = new string[]
             {
-        "bias_current_stpt"
-        ,"bias_voltage_stpt"
-        ,"coil_current_side_a_stpt"
-        ,"coil_current_side_b_stpt"
-        ,"hvps_current_stpt"
-        ,"hvps_a_voltage_stpt"
-        ,"hvps_b_current_stpt"
-        ,"hvps_side_b_stpt"
-        ,"hvps_b_voltage_stpt"
-        ,"phantom_disk_power_stpt"
-        ,"mfc_5_stpt"
-        ,"mfc_6_stpt"
-        ,"mfc_7_stpt"
-        ,"mfc_8_stpt"
+                "bias_current_stpt"
+                ,"bias_voltage_stpt"
+                ,"coil_current_side_a_stpt"
+                ,"coil_current_side_b_stpt"
+                ,"hvps_current_stpt"
+                ,"hvps_a_voltage_stpt"
+                ,"hvps_b_current_stpt"
+                ,"hvps_side_b_stpt"
+                ,"hvps_b_voltage_stpt"
+                ,"phantom_disk_power_stpt"
+                ,"mfc_5_stpt"
+                ,"mfc_6_stpt"
+                ,"mfc_7_stpt"
+                ,"mfc_8_stpt"
             };
                 
             Thread.Sleep(1000);
-
             string[] Queries = File.ReadAllLines(AQT_Fields_To_Graph_QueryPath);
-            string[] UnitLines = File.ReadAllLines(UnitQueryFile);
-
-           
+            string[] UnitLines = File.ReadAllLines(UnitQueryFile);           
 
             StreamWriter outFile = new StreamWriter(outFilePath);
             MySqlConnection conn = new MySqlConnection(Program.connStr);
